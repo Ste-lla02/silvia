@@ -69,6 +69,8 @@ class Configuration(metaclass=Singleton):
             self.put('maskfolder', temp)
             temp = reader['main'].get('imagetype', None)
             self.put('imagetype', temp)
+            temp = reader['main'].get('sam_model', None)
+            self.put('sam_model', temp)
             temp = reader['main'].get('areaofinterest', None)
             temp = ast.literal_eval(temp)
             self.put('areaofinterest', temp)
