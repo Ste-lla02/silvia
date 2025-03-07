@@ -4,6 +4,22 @@ from segment_anything import sam_model_registry, SamAutomaticMaskGenerator
 from src.utils.configuration import Configuration
 import gc
 
+
+
+def show_anns(masks, base_image, image_name, channel_name):
+    configuration = Configuration()
+    mask_folder = configuration.get("maskfolder")
+    if len(masks) > 0:
+        img = np.ones((masks[0]['segmentation'].shape[0], masks[0]['segmentation'].shape[1], 4))  # crea immagine RGBA trasparente
+        img[:, :, 3] = 0
+        for mask in masks:
+            m = mask['segmentation']
+            color_mask = np.concatenate([np.random.random(3), [0.35]])  # colore casuale per ogni maschera più trasparenza
+            img[m] = color_mask
+        mask_filename = os.path.join(mask_folder, f"{image_name}_{channel_name}_masks.png")
+        cv2.imwrite(mask_filename, img)
+        print(f"Immagine salvata: {mask_filename}")
+
 class Segmenter:
     def __init__(self):
         configuration = Configuration()
@@ -50,6 +66,8 @@ class Segmenter:
             mask_filename = os.path.join(mask_folder, f"{name}_{channel}_mask_{i}.png")
             cv2.imwrite(mask_filename, mask_image)
             print(f"Immagine salvata: {mask_filename}")
+        # Save the overall figure
+        show_anns(masks, image, name, channel)
         pass
 
     @staticmethod
