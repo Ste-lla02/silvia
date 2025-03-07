@@ -80,7 +80,9 @@ class Configuration(metaclass=Singleton):
             self.put('channels', temp)
             # SAM
             temp = reader['sam'].get('sam_model', None)
-            self.put('sam_model', temp)
+            temp = self.tolist(temp)
+            self.put('sam_model', temp[0])
+            self.put('sam_kind', temp[1])
             temp = reader['sam'].get('sam_platform', 'cpu')
             self.put('sam_platform', temp)
             temp = reader['sam'].get('points_per_side', 32)
