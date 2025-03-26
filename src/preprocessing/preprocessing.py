@@ -1,5 +1,3 @@
-import os
-from src.utils.configuration import Configuration
 from src.preprocessing.bands_split import red, blue, green, alpha
 from src.preprocessing.alternative_ndvi import *
 
