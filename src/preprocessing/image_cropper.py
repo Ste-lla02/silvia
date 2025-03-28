@@ -6,7 +6,6 @@ from src.utils.configuration import Configuration
 def crop_image_with_polygon(image, image_name):
     configuration = Configuration()
     points = configuration.get('areaofinterest')
-    output_dir = configuration.get('croppedfolder')
     scaling_factor = configuration.get("image_scaling")
     # Carica l'immagine
     # Creare una maschera con lo stesso formato e dimensione dell'immagine
@@ -24,8 +23,4 @@ def crop_image_with_polygon(image, image_name):
     # Resizing
     new_size = (int(result_cropped.width * scaling_factor), int(result_cropped.height * scaling_factor))
     result_cropped = result_cropped.resize(new_size, Image.ANTIALIAS)
-    # Salva l'immagine ritagliata
-    output_path = os.path.join(output_dir, f"{image_name}_cropped.png")
-    result_cropped.save(output_path)
-    print(f"Immagine salvata: {output_path}")
     return result_cropped

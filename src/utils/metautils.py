@@ -1,6 +1,14 @@
 from src.utils.configuration import Configuration
 import shutil
 import os
+import numpy as np
+import cv2
+
+def leq(a: float, b: float) -> bool:
+    return a <= b
+
+def geq(a: float, b: float) -> bool:
+    return a >= b
 
 class FileCleaner():
     def __init__(self):
@@ -14,3 +22,7 @@ class FileCleaner():
             os.makedirs(folder)
 
 
+def pil_to_cv2(pil_image):
+    cv2_image = np.array(pil_image)  # Convert to NumPy array
+    cv2_image = cv2.cvtColor(cv2_image, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR
+    return cv2_image

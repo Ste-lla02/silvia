@@ -1,12 +1,13 @@
-import os
 import numpy as np
 from PIL import Image
-from src.utils.configuration import Configuration
 from src.preprocessing.bands_split import split_and_convert_all
 
 
+#todo: clean the comments
+
 """#VARI function"""
 def vari_ndvi(image, name):
+    VARI_image = None
     r, g, b, a = split_and_convert_all(image)
     try:
         # Calcolo del VARI
@@ -17,17 +18,13 @@ def vari_ndvi(image, name):
         VARI_normalized = (VARI - np.min(VARI)) / (np.max(VARI) - np.min(VARI))
         # Converti in immagine e salva
         VARI_image = Image.fromarray((VARI_normalized * 255).astype(np.uint8))
-        # Salva VARI_normalized
-        configuration = Configuration()
-        output_folder = configuration.get('splittedfolder')
-        output_path = os.path.join(output_folder, f"{name}_vari_normalized.png")
-        VARI_image.save(output_path)
-        print(f"Immagine salvata: {output_path}")
     except Exception as e:
         print(f"VARI Calculation Error with {name}: {e}")
+    return VARI_image
 
 """#TGI function"""
 def tgi_ndvi(image, name):
+    TGI_image = None
     r, g, b, a = split_and_convert_all(image)
     try:
         # Calcolo del TGI
@@ -36,17 +33,13 @@ def tgi_ndvi(image, name):
         TGI_normalized = (TGI - np.min(TGI)) / (np.max(TGI) - np.min(TGI))
         # Converti in immagine e salva
         TGI_image = Image.fromarray((TGI_normalized * 255).astype(np.uint8))
-        # Salva TGI_normalized
-        configuration = Configuration()
-        output_folder = configuration.get('splittedfolder')
-        output_path = os.path.join(output_folder, f"{name}_tgi_normalized.png")
-        TGI_image.save(output_path)
-        print(f"Immagine salvata: {output_path}")
     except Exception as e:
         print(f"TGI Calculation Error with {name}: {e}")
+    return TGI_image
 
 """#GLI function"""
 def gli_ndvi(image, name):
+    GLI_image = None
     r, g, b, a = split_and_convert_all(image)
     try:
         # Calcolo del GLI
@@ -57,18 +50,14 @@ def gli_ndvi(image, name):
         GLI_normalized = (GLI - np.min(GLI)) / (np.max(GLI) - np.min(GLI))
         # Converti in immagine e salva
         GLI_image = Image.fromarray((GLI_normalized * 255).astype(np.uint8))
-        # Salva GLI_normalized
-        configuration = Configuration()
-        output_folder = configuration.get('splittedfolder')
-        output_path = os.path.join(output_folder, f"{name}_gli_normalized.png")
-        GLI_image.save(output_path)
-        print(f"Immagine salvata: {output_path}")
     except Exception as e:
         print(f"GLI Calculation Error with {name}: {e}")
+    return GLI_image
 
 
 """#NGRDI function"""
 def ngrdi_ndvi(image, name):
+    NGRDI_image = None
     r, g, b, a = split_and_convert_all(image)
     try:
         # Calcolo del NGRDI
@@ -79,18 +68,14 @@ def ngrdi_ndvi(image, name):
         NGRDI_normalized = (NGRDI - np.min(NGRDI)) / (np.max(NGRDI) - np.min(NGRDI))
         # Converti in immagine e salva
         NGRDI_image = Image.fromarray((NGRDI_normalized * 255).astype(np.uint8))
-        # Salva NGRDI_normalized
-        configuration = Configuration()
-        output_folder = configuration.get('splittedfolder')
-        output_path = os.path.join(output_folder, f"{name}_ngrdi_normalized.png")
-        NGRDI_image.save(output_path)
-        print(f"Immagine salvata: {output_path}")
     except Exception as e:
         print(f"NGRDI Calculation Error with {name}: {e}")
+    return NGRDI_image
 
 
 """#ExG function"""
 def exg_ndvi(image, name):
+    ExG_image = None
     r, g, b, a = split_and_convert_all(image)
     try:
         # Calcolo del ExG
@@ -99,12 +84,6 @@ def exg_ndvi(image, name):
         ExG_normalized = (ExG - np.min(ExG)) / (np.max(ExG) - np.min(ExG))
         # Converti in immagine e salva
         ExG_image = Image.fromarray((ExG_normalized * 255).astype(np.uint8))
-
-        # Salva NGRDI_normalized
-        configuration = Configuration()
-        output_folder = configuration.get('splittedfolder')
-        output_path = os.path.join(output_folder, f"{name}_exg_normalized.png")
-        ExG_image.save(output_path)
-        print(f"Immagine salvata: {output_path}")
     except Exception as e:
         print(f"ExG Calculation Error with {name}: {e}")
+    return ExG_image
