@@ -1,11 +1,12 @@
-import os
 from PIL import Image, ImageDraw
 from src.utils.configuration import Configuration
+from src.utils.utils import adjust_coordinate_rectangle
+
 
 # Definisci la funzione per ritagliare un'immagine in base ai punti del poligono
 def crop_image_with_polygon(image, image_name):
     configuration = Configuration()
-    points = configuration.get('areaofinterest')
+    points = configuration.get('areaofinterest_image')
     scaling_factor = configuration.get("image_scaling")
     # Carica l'immagine
     # Creare una maschera con lo stesso formato e dimensione dell'immagine
@@ -16,9 +17,7 @@ def crop_image_with_polygon(image, image_name):
     result = Image.new("RGBA", image.size)  # Creare un'immagine con canale alpha
     result.paste(image, mask=mask)  # Applica la maschera per conservare solo il poligono
     # Ritaglia l'immagine al bounding box del poligono per risparmiare spazio
-    x_coords, y_coords = zip(*points)
-    x_min, x_max = min(x_coords), max(x_coords)
-    y_min, y_max = min(y_coords), max(y_coords)
+    x_min, x_max, y_min, y_max = adjust_coordinate_rectangle(points)
     result_cropped = result.crop((x_min, y_min, x_max, y_max))
     # Resizing
     new_size = (int(result_cropped.width * scaling_factor), int(result_cropped.height * scaling_factor))

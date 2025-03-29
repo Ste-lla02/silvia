@@ -6,7 +6,7 @@ from src.preprocessing.image_cropper import crop_image_with_polygon
 from src.preprocessing.preprocessing import splitting_broker
 from src.segmentation.sam_generator import Segmenter
 from src.utils.configuration import Configuration
-from src.utils.metautils import FileCleaner
+from src.utils.utils import FileCleaner
 
 if __name__ == '__main__':
     configuration = Configuration(sys.argv[1])
