@@ -2,10 +2,7 @@ import numpy as np
 from PIL import Image
 from src.preprocessing.bands_split import split_and_convert_all
 
-
 #todo: clean the comments
-
-"""#VARI function"""
 def vari_ndvi(image, name):
     VARI_image = None
     r, g, b, a = split_and_convert_all(image)
@@ -14,20 +11,19 @@ def vari_ndvi(image, name):
         # Evitiamo divisioni per zero aggiungendo un valore epsilon molto piccolo
         epsilon = 1e-6 #todo: estraiamolo come parametro di configurazione
         VARI = (g - r) / (g + r - b + epsilon)
-        # Normalizza i valori del VARI per una migliore visualizzazione (opzionale)
+        # normalization for a better visualisation
         VARI_normalized = (VARI - np.min(VARI)) / (np.max(VARI) - np.min(VARI))
-        # Converti in immagine e salva
+        # conversion
         VARI_image = Image.fromarray((VARI_normalized * 255).astype(np.uint8))
     except Exception as e:
         print(f"VARI Calculation Error with {name}: {e}")
     return VARI_image
 
-"""#TGI function"""
 def tgi_ndvi(image, name):
     TGI_image = None
     r, g, b, a = split_and_convert_all(image)
     try:
-        # Calcolo del TGI
+        # TGI index computing
         TGI = -0.5 * (r - 0.39 * g - 0.61 * b)
         # Normalizza i valori del TGI per una migliore visualizzazione (opzionale)
         TGI_normalized = (TGI - np.min(TGI)) / (np.max(TGI) - np.min(TGI))

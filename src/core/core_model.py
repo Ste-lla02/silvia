@@ -62,8 +62,8 @@ class State:
     def add_mask(self, image_name, mask, channel):
         channels = self.images[image_name]['masks'].keys()
         if not channel in channels:
-            self.images[image_name]['masks'][channel] = list()
-        self.images[image_name]['masks'][channel].append(mask)
+            self.images[image_name]['masks'][channel] = {'singles': list(), 'merged': None}
+        self.images[image_name]['masks'][channel]['singles'].append(mask)
         filename = f"{image_name}_{channel}_mask_{mask['id']}.png"
         self.save_image_and_log(mask, self.mask_directory, filename)
 
@@ -72,7 +72,7 @@ class State:
             self.add_mask(image_name, mask, channel)
         filename = f"{image_name}_{channel}_mergedmasks.png"
         merged = self.make_overall_image(masks, image_name, filename, channel)
-        #todo: aggiungere il merged al dizionario
+        self.images[image_name]['masks'][channel]['merged'] = merged
         self.save_image_and_log(merged, self.mask_directory, filename)
 
     def save_image_and_log(self, image, directory, filename):
@@ -87,6 +87,3 @@ class State:
     def load_pickle(self):
         with open(self.pickle, "rb") as f:
             self.images = pickle.load(f)
-
-
-
