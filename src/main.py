@@ -8,9 +8,9 @@ from src.segmentation.sam_generator import Segmenter
 from src.utils.configuration import Configuration
 from src.utils.utils import FileCleaner
 
-if __name__ == '__main__':
-    configuration = Configuration(sys.argv[1])
-    # cleaninng
+
+def build(conf: Configuration):
+    # cleaning
     cleaner = FileCleaner()
     cleaner.clean()
     # Starting
@@ -28,20 +28,29 @@ if __name__ == '__main__':
             splitted = splitting_function(cropped_image, image_name)
             images.add_channel(image_name, splitted, channel)
         # Segmentation
-        segmenter = Segmenter()#todo: move f in segmenter
+        segmenter = Segmenter()
         f = MaskFeaturing()
         for channel in channels:
             to_segment = images.get_channel(image_name, channel)
             masks = segmenter.mask_generation(to_segment, image_name, channel)
             masks = list(filter(lambda x: f.filter(x), masks))
             images.add_masks(image_name,masks,channel)
-            pass
+        images.save_pickle()
         #final_mask = Segmenter.mask_voting(all_mask)
-        #todo: serializzazione pickle
-        pass
+
+def progress(conf: Configuration):
+    pass
 
 
+functions = {
+    'build': build,
+    'progress': progress
+}
 
+if __name__ == '__main__':
+    configuration = Configuration(sys.argv[1])
+    command = functions[sys.argv[2]]
+    command(configuration)
 
 
 
