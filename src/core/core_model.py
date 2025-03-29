@@ -1,7 +1,7 @@
 import os
 from PIL import Image
 import cv2, numpy as np
-
+import pickle
 
 class State:
     def __init__(self, conf):
@@ -10,6 +10,7 @@ class State:
         self.cropped_directory = conf.get('croppedfolder')
         self.splitting_directory = conf.get('splittedfolder')
         self.mask_directory = conf.get("maskfolder")
+        self.pickle = conf.get('pickle_filename')
         filenames = list(os.listdir(self.input_directory))
         filenames = list(filter(lambda x: x.lower().endswith((self.filetype)), filenames))
         self.images = dict()
@@ -79,7 +80,13 @@ class State:
         image.save(output_path)
         print(f"Immagine salvata: {output_path}")
 
+    def save_pickle(self):
+        with open(self.pickle, "wb") as f:
+            pickle.dump(self.images, f)
 
+    def load_pickle(self):
+        with open(self.pickle, "rb") as f:
+            self.images = pickle.load(f)
 
 
 

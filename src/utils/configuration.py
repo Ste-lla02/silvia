@@ -67,6 +67,8 @@ class Configuration(metaclass=Singleton):
             self.put('splittedfolder', temp)
             temp = reader['main'].get('maskfolder', None)
             self.put('maskfolder', temp)
+            temp = reader['main'].get('pickle_filename', None)
+            self.put('pickle_filename', temp)
             # Area
             temp = reader['area'].get('areaofinterest_earth', None)
             temp = ast.literal_eval(temp)
