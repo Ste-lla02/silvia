@@ -1,11 +1,17 @@
 from src.segmentation.mask_evaluation import *
 from src.utils.configuration import Configuration
-from src.utils.metautils import leq, geq
+from src.utils.utils import leq, geq
 
 class MaskFeaturing:
     mapping = {
         'min_roundness': ('roundness',compute_roundness,geq,'min_roundness'),
+        'max_roundness': ('roundness',compute_roundness,leq,'max_roundness'),
+        'min_eccentricity': ('eccentricity',compute_eccentricity,geq,'min_eccentricity'),
         'max_eccentricity': ('eccentricity',compute_eccentricity,leq,'max_eccentricity'),
+        'min_stability': ('stability', compute_stability, geq, 'min_stability'),
+        'max_stability': ('stability', compute_stability, leq, 'max_stability'),
+        'min_iou': ('iou', compute_iou, geq, 'min_iou'),
+        'max_iou': ('iou', compute_iou, leq, 'max_iou'),
         'min_meters': ('meters',compute_meters,geq,'min_meters'),
         'max_meters': ('meters',compute_meters,leq,'max_meters'),
         'min_percentage': ('percentage',compute_percentage,geq,'min_percentage'),
