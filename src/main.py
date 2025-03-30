@@ -39,7 +39,10 @@ def build(conf: Configuration):
         #final_mask = Segmenter.mask_voting(all_mask)
 
 def progress(conf: Configuration):
+    images = State(conf)
+    images.load_pickle()
     pass
+
 
 
 functions = {
