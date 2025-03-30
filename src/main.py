@@ -32,7 +32,7 @@ def build(conf: Configuration):
         f = MaskFeaturing()
         for channel in channels:
             to_segment = images.get_channel(image_name, channel)
-            masks = segmenter.mask_generation(to_segment, image_name, channel)
+            masks = segmenter.mask_generation(to_segment)
             masks = list(filter(lambda x: f.filter(x), masks))
             images.add_masks(image_name,masks,channel)
         images.save_pickle()

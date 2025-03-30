@@ -33,7 +33,7 @@ class Segmenter:
             min_mask_region_area=min_mask_region_area
         )
 
-    def mask_generation(self, image, name, channel):
+    def mask_generation(self, image):
         retval = list()
         gc.collect()
         cv2_image = pil_to_cv2(image)
