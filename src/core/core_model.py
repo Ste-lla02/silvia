@@ -3,6 +3,9 @@ from PIL import Image
 import cv2, numpy as np
 import pickle
 
+from src.utils.utils import cv2_to_pil, pil_to_cv2
+
+
 class State:
     def __init__(self, conf):
         self.input_directory = conf.get('imagefolder')
@@ -33,7 +36,8 @@ class State:
                 color = np.random.randint(0, 255, (3,), dtype=np.uint8)  # Colore casuale
                 overlay[mask_img > 0] = color  # Applica colore alla maschera
             if base_image is not None:
-                base_img = cv2.cvtColor(base_image, cv2.COLOR_RGB2BGR)  # Converti in BGR se l'immagine di base è RGB
+                base_img = pil_to_cv2(base_image)
+                base_img = cv2.cvtColor(base_img, cv2.COLOR_RGB2BGR)  # Converti in BGR se l'immagine di base è RGB
                 alpha = 0.35
                 blended = cv2.addWeighted(base_img, 1 - alpha, overlay, alpha, 0)
             else:
@@ -65,15 +69,17 @@ class State:
             self.images[image_name]['masks'][channel] = {'singles': list(), 'merged': None}
         self.images[image_name]['masks'][channel]['singles'].append(mask)
         filename = f"{image_name}_{channel}_mask_{mask['id']}.png"
-        self.save_image_and_log(mask, self.mask_directory, filename)
+        mask_pillow = cv2_to_pil(mask['segmentation'])
+        self.save_image_and_log(mask_pillow, self.mask_directory, filename)
 
     def add_masks(self, image_name, masks, channel):
         for mask in masks:
             self.add_mask(image_name, mask, channel)
-        filename = f"{image_name}_{channel}_mergedmasks.png"
-        merged = self.make_overall_image(masks, image_name, filename, channel)
+        merged = self.make_overall_image(image_name, masks, channel)
         self.images[image_name]['masks'][channel]['merged'] = merged
-        self.save_image_and_log(merged, self.mask_directory, filename)
+        merged_pillow = cv2_to_pil(merged)
+        filename = f"{image_name}_{channel}_mergedmasks.png"
+        self.save_image_and_log(merged_pillow, self.mask_directory, filename)
 
     def save_image_and_log(self, image, directory, filename):
         output_path = os.path.join(directory,filename)
