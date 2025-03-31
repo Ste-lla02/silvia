@@ -39,7 +39,7 @@ def build(conf: Configuration):
         images.complete(image_name)
         images.save_pickle()
     topic = conf.get('ntfy_topic')
-    send_ntfy_notification(topic, "Running finished!", "MAT4PAT")
+    send_ntfy_notification(topic)
     #final_mask = Segmenter.mask_voting(all_mask)
 
 def progress(conf: Configuration):
