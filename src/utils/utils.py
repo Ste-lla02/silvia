@@ -1,3 +1,4 @@
+import requests
 from src.utils.configuration import Configuration
 import shutil
 import os
@@ -40,3 +41,13 @@ class FileCleaner():
             folder = configuration.get(folder_name)
             shutil.rmtree(folder)
             os.makedirs(folder)
+
+
+def send_ntfy_notification(topic, message, title="Notification"):
+    url = f"https://ntfy.sh/{topic}"
+    headers = {"Title": title}
+    response = requests.post(url, data=message.encode('utf-8'), headers=headers)
+    if response.status_code == 200:
+        print(f"Notification sent to topic '{topic}'.")
+    else:
+        print(f"Failed to send notification: {response.text}")

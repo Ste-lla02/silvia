@@ -69,6 +69,8 @@ class Configuration(metaclass=Singleton):
             self.put('maskfolder', temp)
             temp = reader['main'].get('pickle_filename', None)
             self.put('pickle_filename', temp)
+            temp = reader['main'].get('ntfy_topic', None)
+            self.put('ntfy_topic', temp)
             # Area
             temp = reader['area'].get('areaofinterest_earth', None)
             temp = ast.literal_eval(temp)

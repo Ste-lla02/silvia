@@ -1,5 +1,4 @@
-import os
-import cv2, numpy as np
+import cv2
 from segment_anything import sam_model_registry, SamAutomaticMaskGenerator
 from src.segmentation.evaluator import MaskFeaturing
 from src.utils.configuration import Configuration
@@ -46,7 +45,3 @@ class Segmenter:
             properties = {**properties, **id}
             retval.append({**mask, **properties})
         return retval
-
-    @staticmethod
-    def mask_voting(mask_list):
-        pass

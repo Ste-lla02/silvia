@@ -2,9 +2,7 @@ import os
 from PIL import Image
 import cv2, numpy as np
 import pickle
-
 from src.utils.utils import cv2_to_pil, pil_to_cv2
-
 
 class State:
     def __init__(self, conf):
@@ -14,6 +12,9 @@ class State:
         self.splitting_directory = conf.get('splittedfolder')
         self.mask_directory = conf.get("maskfolder")
         self.pickle = conf.get('pickle_filename')
+        self.clean()
+
+    def clean(self):
         filenames = list(os.listdir(self.input_directory))
         filenames = list(filter(lambda x: x.lower().endswith((self.filetype)), filenames))
         self.images = dict()
@@ -24,6 +25,8 @@ class State:
             image = Image.open(image_path)
             self.images[image_name]['original'] = image
             self.images[image_name]['masks'] = {}
+            self.images[image_name]['complete'] = False
+
 
     def make_overall_image(self, image_name, masks, channel):
         blended = None
@@ -44,6 +47,9 @@ class State:
                 blended = overlay
         return blended
 
+    def complete(self, image_name: str):
+        self.images[image_name]['complete'] = True
+
     def get_base_images(self):
         return list(self.images.keys())
 
@@ -52,6 +58,11 @@ class State:
 
     def get_channel(self, image_name: str, channel_name: str) -> Image:
         return self.images[image_name][channel_name]
+
+    def add_original(self, image_name, image):
+        self.images[image_name]['cropped'] = image
+        filename = f"{image_name}_cropped.png"
+        self.save_image_and_log(image,self.cropped_directory,filename)
 
     def add_cropped(self, image_name, image):
         self.images[image_name]['cropped'] = image
