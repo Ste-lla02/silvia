@@ -1,5 +1,4 @@
 import sys, os
-
 from src.core.core_model import State
 from src.segmentation.evaluator import MaskFeaturing
 from src.preprocessing.image_cropper import crop_image_with_polygon
@@ -8,7 +7,6 @@ from src.segmentation.sam_generator import Segmenter
 from src.utils.configuration import Configuration
 from src.utils.utils import FileCleaner, send_ntfy_notification
 
-
 def build(conf: Configuration):
     # cleaning
     cleaner = FileCleaner()
@@ -16,7 +14,6 @@ def build(conf: Configuration):
     # Starting
     images = State(configuration)
     for image_filename in images.get_base_images():
-        images.clean()
         # Cropping
         image_name = os.path.basename(image_filename).split('.')[0]
         image = images.get_original(image_name)
@@ -36,8 +33,7 @@ def build(conf: Configuration):
             masks = segmenter.mask_generation(to_segment)
             masks = list(filter(lambda x: f.filter(x), masks))
             images.add_masks(image_name,masks,channel)
-        images.complete(image_name)
-        images.save_pickle()
+        images.save_pickle(image_name)
     topic = conf.get('ntfy_topic')
     send_ntfy_notification(topic)
     #final_mask = Segmenter.mask_voting(all_mask)
@@ -48,9 +44,14 @@ def progress(conf: Configuration):
     pass
 
 
+def clean(conf: Configuration):
+    cleaner = FileCleaner()
+    cleaner.clean()
+
 
 functions = {
     'build': build,
+    'clean': clean,
     'progress': progress
 }
 

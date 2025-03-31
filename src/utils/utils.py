@@ -38,7 +38,7 @@ def send_ntfy_notification(topic):
 
 class FileCleaner():
     def __init__(self):
-        self.folder_names = ['maskfolder', 'croppedfolder', 'splittedfolder']
+        self.folder_names = ['maskfolder', 'croppedfolder', 'splittedfolder', 'picklefolder']
 
     def clean(self):
         configuration = Configuration()

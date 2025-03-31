@@ -11,7 +11,7 @@ class State:
         self.cropped_directory = conf.get('croppedfolder')
         self.splitting_directory = conf.get('splittedfolder')
         self.mask_directory = conf.get("maskfolder")
-        self.pickle = conf.get('pickle_filename')
+        self.pickle = conf.get('picklefolder')
         self.clean()
 
     def clean(self):
@@ -25,8 +25,6 @@ class State:
             image = Image.open(image_path)
             self.images[image_name]['original'] = image
             self.images[image_name]['masks'] = {}
-            self.images[image_name]['complete'] = False
-
 
     def make_overall_image(self, image_name, masks, channel):
         blended = None
@@ -97,10 +95,18 @@ class State:
         image.save(output_path)
         print(f"Immagine salvata: {output_path}")
 
-    def save_pickle(self):
-        with open(self.pickle, "wb") as f:
-            pickle.dump(self.images, f)
+    def save_pickle(self, image_name):
+        filename = f'{image_name}.pickle'
+        output_path = os.path.join(self.pickle,filename)
+        with open(output_path, "wb") as f:
+            pickle.dump(self.images[image_name], f)
 
     def load_pickle(self):
-        with open(self.pickle, "rb") as f:
-            self.images = pickle.load(f)
+        self.images = dict()
+        filenames = list(os.listdir(self.pickle))
+        for filename in filenames:
+            input_path = os.path.join(self.pickle, filename)
+            with open(input_path, "rb") as f:
+                temp = pickle.load(f)
+                self.images = {**self.images, **temp}
+
