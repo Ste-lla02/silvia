@@ -34,6 +34,7 @@ def build(conf: Configuration):
             masks = list(filter(lambda x: f.filter(x), masks))
             images.add_masks(image_name,masks,channel)
         images.save_pickle(image_name)
+        images.remove(image_name)
     topic = conf.get('ntfy_topic')
     send_ntfy_notification(topic)
     #final_mask = Segmenter.mask_voting(all_mask)

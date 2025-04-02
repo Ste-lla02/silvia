@@ -45,8 +45,8 @@ class State:
                 blended = overlay
         return blended
 
-    def complete(self, image_name: str):
-        self.images[image_name]['complete'] = True
+    def remove(self, image_name: str):
+        del self.images[image_name]
 
     def get_base_images(self):
         return list(self.images.keys())
@@ -105,8 +105,9 @@ class State:
         self.images = dict()
         filenames = list(os.listdir(self.pickle))
         for filename in filenames:
+            image_name = os.path.splitext(filename)[0]
             input_path = os.path.join(self.pickle, filename)
             with open(input_path, "rb") as f:
                 temp = pickle.load(f)
-                self.images = {**self.images, **temp}
+                self.images[image_name] = {**self.images, **temp}
 
