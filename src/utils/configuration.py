@@ -25,8 +25,10 @@ class Configuration(metaclass=Singleton):
 
     @staticmethod
     def tolist(value):
-        retval = value.split(',')
-        retval = list(map(lambda x: x.strip(),retval))
+        retval = value
+        if len(retval) > 0:
+            retval = value.split(',')
+            retval = list(map(lambda x: x.strip(),retval))
         return retval
 
     def loadSection(self, reader, s):
@@ -136,5 +138,15 @@ class Configuration(metaclass=Singleton):
             self.put('max_pixels', float(temp))
             temp = reader['filters'].get('min_pixels', 100000)
             self.put('min_pixels', float(temp))
+            #control
+            temp = reader['control'].get('save_images', True)
+            temp = temp == 'True'
+            self.put('save_images', temp)
+            temp = reader['control'].get('clean_images', True)
+            temp = temp == 'True'
+            self.put('clean_images', temp)
+            temp = reader['control'].get('clean_pickles', True)
+            temp = temp == 'True'
+            self.put('clean_pickles', temp)
         except Exception as s:
             print(s)

@@ -13,5 +13,5 @@ class Voter:
         configuration = Configuration()
         pass
 
-    def mask_voting(self, mask_list: List[dict]):
+    def mask_voting(self, mask_list: dict):
         pass

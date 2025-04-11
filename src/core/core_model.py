@@ -1,3 +1,4 @@
+import glob
 import os
 from PIL import Image
 import cv2, numpy as np
@@ -12,6 +13,7 @@ class State:
         self.splitting_directory = conf.get('splittedfolder')
         self.mask_directory = conf.get("maskfolder")
         self.pickle = conf.get('picklefolder')
+        self.save_flag = conf.get('save_images')
         self.clean()
 
     def clean(self):
@@ -54,8 +56,14 @@ class State:
     def get_original(self, image_name: str) -> Image:
         return self.images[image_name]['original']
 
+    def set_original(self, image_name: str, image: Image):
+        self.images[image_name]['original'] = image
+
     def get_channel(self, image_name: str, channel_name: str) -> Image:
         return self.images[image_name][channel_name]
+
+    def get_masks(self, image_name: str) -> dict():
+        return self.images[image_name]['masks']
 
     def add_original(self, image_name, image):
         self.images[image_name]['cropped'] = image
@@ -91,15 +99,22 @@ class State:
         self.save_image_and_log(merged_pillow, self.mask_directory, filename)
 
     def save_image_and_log(self, image, directory, filename):
-        output_path = os.path.join(directory,filename)
-        image.save(output_path)
-        print(f"Immagine salvata: {output_path}")
+        if self.save_flag:
+            output_path = os.path.join(directory, filename)
+            image.save(output_path)
+            print(f"Immagine salvata: {output_path}")
 
     def save_pickle(self, image_name):
         filename = f'{image_name}.pickle'
         output_path = os.path.join(self.pickle,filename)
         with open(output_path, "wb") as f:
             pickle.dump(self.images[image_name], f)
+
+    def check_pickle(self, image_name):
+        filename = f'{image_name}.pickle'
+        pattern = os.path.join(self.pickle, filename)
+        check = glob.glob(pattern)
+        return check
 
     def load_pickle(self):
         self.images = dict()
