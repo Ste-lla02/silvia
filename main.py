@@ -1,6 +1,6 @@
 import sys, os
 from src.core.core_model import State
-from src.segmentation.channel_voter import Voter
+from src.segmentation.image_fusion import Fusion
 from src.segmentation.evaluator import MaskFeaturing
 from src.preprocessing.image_cropper import crop_image_with_polygon
 from src.preprocessing.preprocessing import splitting_broker
@@ -35,7 +35,7 @@ def build(conf: Configuration):
                     masks = list(filter(lambda x: f.filter(x), masks))
                     images.add_masks(image_name, masks, channel)
                 image_masks = images.get_masks(image_name)
-                voter = Voter(conf)
+                voter = Fusion(conf)
                 final_masks = voter.mask_voting(image_masks)
                 # Serializing
                 images.save_pickle(image_name)
@@ -48,6 +48,11 @@ def build(conf: Configuration):
 def fusion(conf: Configuration):
     images = State(conf)
     images.load_pickle()
+    fusion_engine = Fusion(conf)
+    channels = fusion_engine.get_channels()
+    for image_name in images.get_base_images():
+        masks = 1
+        merged_masks = fusion_engine.mask_voting()
     pass
 
 
