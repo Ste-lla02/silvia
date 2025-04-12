@@ -124,5 +124,5 @@ class State:
             input_path = os.path.join(self.pickle, filename)
             with open(input_path, "rb") as f:
                 temp = pickle.load(f)
-                self.images[image_name] = {**self.images, **temp}
+                self.images[image_name] = temp
 

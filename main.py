@@ -45,10 +45,11 @@ def build(conf: Configuration):
                 images.remove(image_name)
     send_ntfy_notification(topic)
 
-def progress(conf: Configuration):
+def fusion(conf: Configuration):
     images = State(conf)
     images.load_pickle()
     pass
+
 
 def clean(conf: Configuration):
     cleaner = FileCleaner(conf)
@@ -57,7 +58,7 @@ def clean(conf: Configuration):
 functions = {
     'build': build,
     'clean': clean,
-    'progress': progress
+    'fusion': fusion
 }
 
 if __name__ == '__main__':

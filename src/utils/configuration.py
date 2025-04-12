@@ -138,7 +138,7 @@ class Configuration(metaclass=Singleton):
             self.put('max_pixels', float(temp))
             temp = reader['filters'].get('min_pixels', 100000)
             self.put('min_pixels', float(temp))
-            #control
+            # Control
             temp = reader['control'].get('save_images', True)
             temp = temp == 'True'
             self.put('save_images', temp)
@@ -148,5 +148,16 @@ class Configuration(metaclass=Singleton):
             temp = reader['control'].get('clean_pickles', True)
             temp = temp == 'True'
             self.put('clean_pickles', temp)
+            # Fusion
+            temp = reader['fusion'].get('masters', [])
+            temp = self.tolist(temp)
+            self.put('masters', temp)
+            temp = reader['fusion'].get('slaves', [])
+            temp = self.tolist(temp)
+            self.put('slaves', temp)
+            temp = reader['fusion'].get('inter_slave_operator', 'any')
+            self.put('inter_slave_operator', temp)
+            temp = reader['fusion'].get('inter_master_operator', 'any')
+            self.put('inter_master_operator', temp)
         except Exception as s:
             print(s)
