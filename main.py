@@ -35,8 +35,6 @@ def build(conf: Configuration):
                     masks = list(filter(lambda x: f.filter(x), masks))
                     images.add_masks(image_name, masks, channel)
                 image_masks = images.get_masks(image_name)
-                voter = Fusion(conf)
-                final_masks = voter.mask_voting(image_masks)
                 # Serializing
                 images.save_pickle(image_name)
             except Exception as e:
