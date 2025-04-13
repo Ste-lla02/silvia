@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Tuple
 
 import cv2, numpy as np
 from segment_anything import sam_model_registry, SamAutomaticMaskGenerator
@@ -24,13 +24,11 @@ class Fusion:
         return self.slaves
 
     def get_channels(self):
-        retval = list(map(lambda x: ('master',x), self.masters))
-        slaves = list(map(lambda x: ('slave',x), self.slaves))
-        retval.extend(slaves)
+        retval = list(self.masters)
+        retval.extend(self.slaves)
         return retval
 
-
-    def __decode_operators(self, temp, n):
+    def __decode_operators(self, temp: str, n: int) -> int:
         k = 0
         if temp == 'any':
             k = 1
@@ -40,5 +38,10 @@ class Fusion:
             k = int(temp)
         return k
 
-    def mask_voting(self, mask_list: dict):
+    def __fusion(self, masks_to_merge, k, n):
+        pass
+
+    def mask_voting(self, mask_list: dict, channels: List[str]):
+        internal_slaves = {key: mask_list[key] for key in channels if key in mask_list}
+        slave_masks = self.__fusion(internal_slaves, self.is_k, len(self.slaves))
         pass

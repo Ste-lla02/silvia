@@ -49,10 +49,13 @@ def fusion(conf: Configuration):
     images = State(conf)
     images.load_pickle()
     fusion_engine = Fusion(conf)
-    channels = fusion_engine.get_channels()
+    channel_names = fusion_engine.get_channels()
     for image_name in images.get_base_images():
-        masks = 1
-        merged_masks = fusion_engine.mask_voting()
+        masks = images.get_masks(image_name, channel_names)
+        for ch in masks.keys():
+            for id in masks[ch]:
+                id['merged'] = False
+        merged_masks = fusion_engine.mask_voting(masks, channel_names)
     pass
 
 

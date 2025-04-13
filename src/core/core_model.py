@@ -1,5 +1,7 @@
 import glob
 import os
+from typing import List
+
 from PIL import Image
 import cv2, numpy as np
 import pickle
@@ -62,8 +64,11 @@ class State:
     def get_channel(self, image_name: str, channel_name: str) -> Image:
         return self.images[image_name][channel_name]
 
-    def get_masks(self, image_name: str) -> dict():
-        return self.images[image_name]['masks']
+    def get_masks(self, image_name: str, channels: List[str]) -> dict():
+        retval = dict()
+        for channel in channels:
+            retval[channel] = self.images[image_name]['masks'][channel]['singles']
+        return retval
 
     def add_original(self, image_name, image):
         self.images[image_name]['cropped'] = image
