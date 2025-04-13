@@ -34,7 +34,6 @@ def build(conf: Configuration):
                     masks = segmenter.mask_generation(to_segment)
                     masks = list(filter(lambda x: f.filter(x), masks))
                     images.add_masks(image_name, masks, channel)
-                image_masks = images.get_masks(image_name)
                 # Serializing
                 images.save_pickle(image_name)
             except Exception as e:
