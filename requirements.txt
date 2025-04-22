@@ -1,0 +1,8 @@
+python==3.10.x
+numpy==2.0.1
+opencv-python==4.11.0.x
+#pillow==11.1.0
+pillow==9.5.0
+segment_anything==1.0
+torch==2.6.0
+torchvision==0.21.0

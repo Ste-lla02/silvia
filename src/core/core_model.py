@@ -68,7 +68,7 @@ class State:
     def add_original(self, image_name, image):
         self.images[image_name]['cropped'] = image
         filename = f"{image_name}_cropped.png"
-        self.save_image_and_log(image,self.cropped_directory,filename)
+        self.save_image_and_log(image,self.cropped_directory,filename) #todo: change function, this is a copy&paste of add_cropped
 
     def add_cropped(self, image_name, image):
         self.images[image_name]['cropped'] = image
@@ -99,6 +99,8 @@ class State:
         self.save_image_and_log(merged_pillow, self.mask_directory, filename)
 
     def save_image_and_log(self, image, directory, filename):
+        if not os.path.exists(directory):
+            os.makedirs(directory)
         if self.save_flag:
             output_path = os.path.join(directory, filename)
             image.save(output_path)

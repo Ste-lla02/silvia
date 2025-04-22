@@ -40,6 +40,7 @@ def build(conf: Configuration):
                 # Serializing
                 images.save_pickle(image_name)
             except Exception as e:
+                print(image_name, str(e))
                 send_ntfy_error(topic, image_name, str(e))
             finally:
                 images.remove(image_name)

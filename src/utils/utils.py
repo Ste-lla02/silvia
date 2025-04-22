@@ -1,3 +1,5 @@
+import subprocess
+
 from src.utils.configuration import Configuration
 import shutil, os, getpass, socket, numpy as np, cv2, requests
 from PIL import Image
@@ -40,7 +42,7 @@ def send_ntfy_error(topic, image_name, error):
     url = f"https://ntfy.sh/{topic}"
     username = getpass.getuser()
     hostname = socket.gethostname()
-    project = "sud4vup"
+    project = "mat4pat"
     message = f"{project}: error by {username} on {hostname} on image {image_name}: {error}!!"
     response = requests.post(url, data=message.encode('utf-8'))
     if response.status_code == 200:
@@ -52,7 +54,7 @@ def send_ntfy_warning(topic, image_name, error):
     url = f"https://ntfy.sh/{topic}"
     username = getpass.getuser()
     hostname = socket.gethostname()
-    project = "sud4vup"
+    project = "mat4pat"
     message = f"{project}: warning by {username} on {hostname} on image {image_name}: {error}!!"
     response = requests.post(url, data=message.encode('utf-8'))
     if response.status_code == 200:
@@ -80,3 +82,10 @@ class FileCleaner():
                     folder = configuration.get(folder_name)
                     shutil.rmtree(folder)
                     os.makedirs(folder)
+
+
+def wget_download(url,output_path):
+    resp = requests.get(url)
+    with open(output_path, "wb") as f:
+        f.write(resp.content)
+    return True
