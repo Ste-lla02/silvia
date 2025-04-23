@@ -34,11 +34,12 @@ def build(conf: Configuration):
                     masks = segmenter.mask_generation(to_segment)
                     masks = list(filter(lambda x: f.filter(x), masks))
                     images.add_masks(image_name, masks, channel)
-                image_masks = images.get_masks(image_name)
-                voter = Voter(conf)
-                final_masks = voter.mask_voting(image_masks)
+                #image_masks = images.get_masks(image_name)
+                #voter = Voter(conf)
+                #final_masks = voter.mask_voting(image_masks)
                 # Serializing
                 images.save_pickle(image_name)
+                print(f"Pickle salvato: {image_name}.pickle")
             except Exception as e:
                 print(image_name, str(e))
                 send_ntfy_error(topic, image_name, str(e))
@@ -47,9 +48,13 @@ def build(conf: Configuration):
     send_ntfy_notification(topic)
 
 def progress(conf: Configuration):
+    topic = conf.get('ntfy_topic')
     images = State(conf)
-    images.load_pickle()
-    pass
+    try:
+        images.load_pickle()
+    except Exception as e:
+        print(str(e))
+        send_ntfy_error(topic, 'pkl', str(e))
 
 def clean(conf: Configuration):
     cleaner = FileCleaner(conf)
