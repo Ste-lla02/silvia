@@ -9,9 +9,10 @@ from src.utils.configuration import Configuration
 import gc
 
 class Voter:
-    def __init__(self):
-        configuration = Configuration()
+    def __init__(self, conf):
+        self.priority_channels = conf.get('priority_channels')
+        self.secondary_channels = conf.get('secondary_channels')
         pass
 
     def mask_voting(self, mask_list: dict):
-        pass
+        return mask_list[0]

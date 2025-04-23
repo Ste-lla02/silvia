@@ -138,6 +138,14 @@ class Configuration(metaclass=Singleton):
             self.put('max_pixels', float(temp))
             temp = reader['filters'].get('min_pixels', 100000)
             self.put('min_pixels', float(temp))
+            #Fusion
+            temp = reader['fusion'].get('priority_channels', [])
+            temp = self.tolist(temp)
+            self.put('fusion', temp)
+            temp = reader['fusion'].get('priority_channels', ['plain'])
+            self.put('priority_channels', temp)
+            temp = reader['fusion'].get('secondary_channels', [])
+            self.put('secondary_channels', temp)
             #control
             temp = reader['control'].get('save_images', True)
             temp = temp == 'True'

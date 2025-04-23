@@ -34,9 +34,9 @@ def build(conf: Configuration):
                     masks = segmenter.mask_generation(to_segment)
                     masks = list(filter(lambda x: f.filter(x), masks))
                     images.add_masks(image_name, masks, channel)
-                #image_masks = images.get_masks(image_name)
-                #voter = Voter(conf)
-                #final_masks = voter.mask_voting(image_masks)
+                image_masks = images.get_masks(image_name)
+                voter = Voter(conf)
+                final_masks = voter.mask_voting(image_masks)
                 # Serializing
                 images.save_pickle(image_name)
                 print(f"Pickle salvato: {image_name}.pickle")
