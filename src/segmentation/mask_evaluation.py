@@ -47,7 +47,7 @@ def compute_eccentricity(mask) -> float:
 
 def compute_percentage(mask) -> float:
     total_area = mask['segmentation'].size
-    mask_area = mask['area'].size
+    mask_area = mask['area']
     retval = 100 * float(mask_area) / float(total_area)
     return retval
 
