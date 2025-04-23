@@ -107,8 +107,10 @@ class State:
             print(f"Immagine salvata: {output_path}")
 
     def save_pickle(self, image_name):
-        filename = f'{image_name}.pickle'
+        filename = f'{image_name}.pkl'
         output_path = os.path.join(self.pickle,filename)
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
         with open(output_path, "wb") as f:
             pickle.dump(self.images[image_name], f)
 
