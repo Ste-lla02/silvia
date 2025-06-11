@@ -69,7 +69,6 @@ class Fusion:
                         other_flag = Fusion.overlapping_masks(mask, other_mask)
                         found = found or other_flag
                         other_mask['merged'] = other_flag
-
                 mask['merged'] = found
 
 
