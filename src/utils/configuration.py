@@ -71,8 +71,13 @@ class Configuration(metaclass=Singleton):
             self.put('maskfolder', temp)
             temp = reader['main'].get('picklefolder', None)
             self.put('picklefolder', temp)
+            temp = reader['main'].get('fusionfolder', None)
+            self.put('fusionfolder', temp)
             temp = reader['main'].get('ntfy_topic', None)
             self.put('ntfy_topic', temp)
+            #General
+            temp = reader['general'].get('epsilon_ndvi',0.2)
+            self.put('epsilon_ndvi', float(temp))
             # Area
             temp = reader['area'].get('areaofinterest_earth', None)
             temp = ast.literal_eval(temp)
