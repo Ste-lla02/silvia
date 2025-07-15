@@ -80,3 +80,10 @@ class FileCleaner():
                     folder = configuration.get(folder_name)
                     shutil.rmtree(folder)
                     os.makedirs(folder)
+
+
+def wget_download(url,output_path):
+    resp = requests.get(url)
+    with open(output_path, "wb") as f:
+        f.write(resp.content)
+    return True
