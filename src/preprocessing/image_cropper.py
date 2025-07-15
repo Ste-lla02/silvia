@@ -21,5 +21,5 @@ def crop_image_with_polygon(image, image_name):
     result_cropped = result.crop((x_min, y_min, x_max, y_max))
     # Resizing
     new_size = (int(result_cropped.width * scaling_factor), int(result_cropped.height * scaling_factor))
-    result_cropped = result_cropped.resize(new_size, Image.ANTIALIAS)
+    result_cropped = result_cropped.resize(new_size, Image.LANCZOS)
     return result_cropped

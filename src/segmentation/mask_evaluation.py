@@ -47,7 +47,7 @@ def compute_eccentricity(mask) -> float:
 
 def compute_percentage(mask) -> float:
     total_area = mask['segmentation'].size
-    mask_area = mask['area'].size
+    mask_area = mask['area']
     retval = 100 * float(mask_area) / float(total_area)
     return retval
 
@@ -63,11 +63,11 @@ def compute_iou(mask) -> float:
 def compute_meters(mask) -> float:
     configuration = Configuration()
     lat_min, lat_max, long_min, long_max = adjust_coordinate_rectangle(configuration.get('areaofinterest_earth'))
-    height = haversine(lat_min, long_min, lat_max, long_min)
-    width = haversine(lat_min, long_min, lat_min, long_max)
+    height = haversine((lat_min, long_min), (lat_max, long_min))
+    width = haversine((lat_min, long_min), (lat_min, long_max))
     total_meters = width * height
     total_pixels = mask['segmentation'].size
-    mask_pixels = mask['area'].size
-    mask_meters = (total_meters * mask_pixels) / total_pixels;
+    mask_pixels = mask['area']
+    mask_meters = (total_meters * mask_pixels) / total_pixels
     return mask_meters
 
