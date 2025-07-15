@@ -7,6 +7,7 @@ from src.preprocessing.preprocessing import splitting_broker
 from src.segmentation.sam_generator import Segmenter
 from src.utils.configuration import Configuration
 from src.utils.utils import FileCleaner, send_ntfy_notification, send_ntfy_error
+from itertools import chain
 
 def build(conf: Configuration):
     # Starting
@@ -32,8 +33,10 @@ def build(conf: Configuration):
                 for channel in channels:
                     to_segment = images.get_channel(image_name, channel)
                     masks = segmenter.mask_generation(to_segment)
+                    print(f"Masks Generation is running for channel {channel}...")
                     masks = list(filter(lambda x: f.filter(x), masks))
                     images.add_masks(image_name, masks, channel)
+                    print(f"Filtering for channel {channel}...")
                 # Serializing
                 images.save_pickle(image_name)
             except Exception as e:
@@ -43,18 +46,21 @@ def build(conf: Configuration):
     send_ntfy_notification(topic)
 
 def fusion(conf: Configuration):
+    topic = conf.get('ntfy_topic')
     images = State(conf)
     images.load_pickle()
     fusion_engine = Fusion(conf)
     channel_names = fusion_engine.get_channels()
-    for image_name in images.get_base_images():
+    merged_masks = list()
+    for image_filename in images.get_base_images():
+        image_name = os.path.basename(image_filename).split('.')[0]
+        image = images.get_cropped(image_name)
         masks = images.get_masks(image_name, channel_names)
-        for ch in masks.keys():
-            for id in masks[ch]:
-                id['merged'] = False
+        for mask in chain.from_iterable(masks.values()):
+            mask['merged'] = False
         merged_masks = fusion_engine.mask_voting(masks, channel_names)
-        #todo: continuare con la serializzazione delle nuove maschere
-    pass
+        images.add_fusion(merged_masks, image, image_filename)
+    send_ntfy_notification(topic)
 
 def clean(conf: Configuration):
     cleaner = FileCleaner(conf)

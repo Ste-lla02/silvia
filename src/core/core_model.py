@@ -16,6 +16,7 @@ class State:
         self.mask_directory = conf.get("maskfolder")
         self.pickle = conf.get('picklefolder')
         self.save_flag = conf.get('save_images')
+        self.fusion_directory = conf.get("fusionfolder")
         self.clean()
 
     def clean(self):
@@ -75,6 +76,9 @@ class State:
         filename = f"{image_name}_cropped.png"
         self.save_image_and_log(image,self.cropped_directory,filename)
 
+    def get_cropped(self, image_name: str) -> Image:
+        return self.images[image_name]['cropped']
+
     def add_cropped(self, image_name, image):
         self.images[image_name]['cropped'] = image
         filename = f"{image_name}_cropped.png"
@@ -125,9 +129,20 @@ class State:
         self.images = dict()
         filenames = list(os.listdir(self.pickle))
         for filename in filenames:
+            if not filename.endswith(('.pkl', '.pickle')):
+                continue
             image_name = os.path.splitext(filename)[0]
             input_path = os.path.join(self.pickle, filename)
             with open(input_path, "rb") as f:
                 temp = pickle.load(f)
                 self.images[image_name] = temp
 
+    def add_fusion(self, merged_masks, image, image_filename):
+        width, height = image.size
+        merged_mask = np.zeros((height, width), dtype=bool)
+        for mask in merged_masks:
+            merged_mask = np.logical_or(merged_mask, mask['segmentation'])
+        binary_image = (merged_mask * 255).astype(np.uint8)
+        pil_img = Image.fromarray(binary_image)
+        filename = f"{image_filename}_fusion.png"
+        self.save_image_and_log(pil_img, self.fusion_directory, filename)
