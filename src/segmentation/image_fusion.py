@@ -7,6 +7,7 @@ class Fusion:
         self.slaves = conf.get('slaves')
         self.is_k = conf.get('inter_slave_operator')
         self.im_k = conf.get('inter_master_operator')
+        self.channel = conf.get('channel')
 
     def get_masters(self):
         return self.masters
@@ -18,6 +19,8 @@ class Fusion:
         retval = list(self.masters)
         retval.extend(self.slaves)
         return retval
+    def get_fusion_channel(self):
+        return self.channel
 
     @staticmethod
     def iou_overlap(mask1, mask2):
@@ -65,23 +68,23 @@ class Fusion:
             masks = list(channels_to_merge[channel])
             masks = list(filter(lambda x: x['merged'] == False,masks))
             merged_masks.extend(masks)
-            print(f"Numero di maschere del channel {channel} : {len(masks)}\n")
-            print(f"Numero di maschere in merged : {len(merged_masks)}\n")
+            #print(f"Numero di maschere del channel {channel} : {len(masks)}\n")
+            #print(f"Numero di maschere in merged : {len(merged_masks)}\n")
             other_masks = list()
             first = True
             for mask in masks:
                 for other_channel in channel_names:
                     if first:
                         other_masks = list(channels_to_merge[other_channel])
-                        print(f"First: numero di maschere del channel {other_channel} : {len(other_masks)}\n")
+                        #print(f"First: numero di maschere del channel {other_channel} : {len(other_masks)}\n")
                         first = False
                     for other_mask in other_masks:
                         other_flag = Fusion.iou_overlap(mask['segmentation'], other_mask['segmentation'])
                         other_mask['merged'] = other_flag
                     other_masks = list(filter(lambda x: x['merged'] == False, other_masks))
-            print(f"Numero di maschere del secondo canale : {len(other_masks)}\n")
+            #print(f"Numero di maschere del secondo canale : {len(other_masks)}\n")
             merged_masks.extend(other_masks)
-        print(f"Final: Numero di maschere in merged: {len(merged_masks)}\n")
+        #print(f"Final: Numero di maschere in merged: {len(merged_masks)}\n")
         return merged_masks
 
     def __fusion_policy(self, channels_to_merge, k):
