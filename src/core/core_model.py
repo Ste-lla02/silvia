@@ -138,26 +138,16 @@ class State:
                 temp = pickle.load(f)
                 self.images[image_name] = temp
 
-    def add_fusion_old(self, merged_masks, image, image_filename):
-        width, height = image.size
-        merged_mask = np.zeros((height, width), dtype=bool)
-        for mask in merged_masks:
-            merged_mask = np.logical_or(merged_mask, mask['segmentation'])
-        binary_image = (merged_mask * 255).astype(np.uint8)
-        pil_img = Image.fromarray(binary_image)
-        self.images[image_filename]['fusion'] = pil_img
-        fusion_filename = f"{image_filename}_fusion.png"
-        self.save_image_and_log(pil_img, self.fusion_directory, fusion_filename)
-
     def add_fusion(self, merged_masks, image, image_filename, channel):
         width, height = image.size
         merged_mask = np.zeros((height, width), dtype=bool)
         for mask in merged_masks:
             self.add_mask(image_filename, mask, channel)
             merged_mask = np.logical_or(merged_mask, mask['segmentation'])
+        self.images[image_filename]['masks'][channel]['merged'] = merged_mask
         binary_image = (merged_mask * 255).astype(np.uint8)
         pil_img = Image.fromarray(binary_image)
-        self.images[image_filename]['masks'][channel]['merged'] = pil_img
+        self.images[image_filename][channel] = pil_img
         fusion_filename = f"{image_filename}_fusion.png"
         self.save_image_and_log(pil_img, self.fusion_directory, fusion_filename)
 

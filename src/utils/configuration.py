@@ -169,7 +169,10 @@ class Configuration(metaclass=Singleton):
             temp = reader['fusion'].get('channel', 'fusion')
             self.put('channel', temp)
             # Analysis
-            temp = reader['analysis'].get('channel', 'fusion')
-            self.put('channel', temp)
+            temp = reader['analysis'].get('channels', [])
+            temp = self.tolist(temp)
+            self.put('channels', temp)
+            temp = reader['analysis'].get('analysisfolder', None)
+            self.put('analysisfolder', temp)
         except Exception as s:
             print(s)

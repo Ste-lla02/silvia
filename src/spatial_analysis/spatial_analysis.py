@@ -1,11 +1,26 @@
 import numpy as np
 import pandas as pd
+import os
 
 
 class Analysis:
     def __init__(self, conf):
-        self._next_fc_id = 0
+        self.folder = conf.get('analysisfolder')
+        self.channels = conf.get('channels')
+        self._next_c_id = 0
         pass
+
+    def get_channels(self):
+        return list(self.channels)
+
+    def get_analysisfolder(self):
+        return self.folder
+
+    def save_analysisdata(self, folder_path, data, image_filename):
+        file_name = f"{image_filename}_analysis.csv"
+        fullpath = os.path.join(folder_path, file_name)
+        data.to_csv(fullpath, index=False)
+        print(f"Analisi di {image_filename} salvate in {fullpath}")
 
     def compute_centroid(self, mask_segmentation):
         coords = np.argwhere(mask_segmentation)
@@ -17,17 +32,16 @@ class Analysis:
         un DataFrame con le feature di ciascuna maschera e l'id temporale.
         """
         records = []
-        for idx, mask_dict in enumerate(masks):
-            seg = mask_dict['segmentation']
+        for mask in masks:
+            seg = mask['segmentation']
             cy, cx = self.compute_centroid(seg)
             perimeter = np.logical_xor(seg, np.roll(seg, 1, axis=0)).sum() + np.logical_xor(seg, np.roll(seg, 1,
                                                                                                          axis=1)).sum()
-            # genera qui l'id univoco
-            fc_id = self._next_fc_id
-            self._next_fc_id += 1
+            # genera qui l'id univoco: channel_id
+            c_id = self._next_c_id
+            self._next_c_id += 1
             records.append({
-                'fc_id': fc_id,
-                'local_idx': idx,
+                'c_id': c_id,
                 'centroid_y': cy,
                 'centroid_x': cx,
                 'perimeter_px': perimeter
@@ -62,19 +76,3 @@ class Analysis:
                 next_id += 1
 
         return curr_df
-
-    # Esempio d'uso con liste di maschere per due immagini:
-    # masks_t0 e masks_t1 sono le liste di dizionari post-fusione
-
-    # df_t0 = extract_mask_features(masks_t0, '2020-01-01')
-    # df_t0['fc_id'] = range(len(df_t0))
-
-    # df_t1 = extract_mask_features(masks_t1, '2020-06-01')
-    # df_t1 = match_mask_ids(df_t0, df_t1, max_dist=15.0)
-
-    # df_all = pd.concat([df_t0, df_t1], ignore_index=True)
-    # df_all.to_csv('fc_spatial_features.csv', index=False)
-
-    # Mostra il DataFrame risultante
-    df_all = pd.DataFrame()  # sostituisci con df_all nel tuo caso
-    df_all

@@ -71,16 +71,20 @@ def analysis(conf: Configuration):
     images = State(conf)
     images.load_pickle()
     analysis_engine = Analysis(conf)
-    channel_name = analysis_engine.get_channel()
+    channel_names = analysis_engine.get_channels()
+    folder_path = analysis_engine.get_analysisfolder()
     for image_filename in images.get_base_images():
-        print(f"Analysis is running for image {image_filename}...")
-        image = images.get_channel(image_filename, channel_name)
-        masks = images.get_fusion_masks(image_filename)
-
-
+        masks = images.get_masks(image_filename, channel_names)
+        for channel_name in channel_names:
+            print(f"Analysis is running for image {image_filename} and channel {channel_name}...")
+            pd = analysis_engine.extract_mask_features(masks[channel_name])
+            print(pd)
+            # Serializing
+            analysis_engine.save_analysisdata(folder_path, pd, image_filename)
+        # Serializing
+        #images.save_pickle(image_filename)
     send_ntfy_notification(topic)
-    #todo implemetare
-    pass
+
 
 def clean(conf: Configuration):
     cleaner = FileCleaner(conf)
