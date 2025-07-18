@@ -1,12 +1,5 @@
-import os
-from typing import List, Tuple
-
-import cv2, numpy as np
-from segment_anything import sam_model_registry, SamAutomaticMaskGenerator
-
-from src.segmentation.evaluator import MaskFeaturing
-from src.utils.configuration import Configuration
-import gc
+from typing import List
+import numpy as np
 
 class Fusion:
     def __init__(self, conf):
@@ -14,10 +7,6 @@ class Fusion:
         self.slaves = conf.get('slaves')
         self.is_k = conf.get('inter_slave_operator')
         self.im_k = conf.get('inter_master_operator')
-        #temp = conf.get('inter_slave_operator')
-        #self.is_k = self.__decode_operators(temp, len(self.slaves))
-        #temp = conf.get('inter_master_operator')
-        #self.im_k = self.__decode_operators(temp, len(self.masters))
 
     def get_masters(self):
         return self.masters
@@ -28,22 +17,6 @@ class Fusion:
     def get_channels(self):
         retval = list(self.masters)
         retval.extend(self.slaves)
-        return retval
-
-    def __decode_operators(self, temp: str, n: int) -> int:
-        if temp == 'any':
-            return 1
-        elif temp == 'all':
-            return n
-        else:
-            return int(temp)
-
-    @staticmethod
-    def overlapping_masks(mask1: dict(), mask2: dict()) -> bool:
-        #todo: improve the detection of the cropping box
-        x1_min, y1_min, x1_max, y1_max = mask1['bbox']
-        x2_min, y2_min, x2_max, y2_max = mask2['bbox']
-        retval = not (x1_max < x2_min or x2_max < x1_min or y1_max < y2_min or y2_max < y1_min)
         return retval
 
     @staticmethod
@@ -57,37 +30,6 @@ class Fusion:
             else:
                 return True
 
-    @staticmethod
-    def merge_masks(mask1: dict(), mask2: dict()) -> dict():
-        retval = dict(mask1)
-        #todo: implement the method
-        return retval
-
-    def __fusion(self, channels_to_merge, k):
-        merged_masks = list()
-        channel_names = list(channels_to_merge.keys())
-        while len(channel_names) > 0:
-            channel = channel_names.pop(0)
-            masks = list(channels_to_merge[channel])
-            masks = list(filter(lambda x: x['merged'] == False,masks))
-            for mask in masks:
-                merged_mask = dict(mask)
-                candidate_masks = list()
-                found = False
-                for other_channel in channel_names:
-                    other_masks = list(channels_to_merge[other_channel])
-                    for other_mask in other_masks:
-                        other_flag = Fusion.overlapping_masks(mask, other_mask)
-                        found = found or other_flag
-                        if found:
-                            other_mask['merged'] = found
-                            mask['merged'] = found
-                            candidate_masks.append(mask)
-                        else:
-                            continue
-            pass
-        pass
-
     def __fusion_all(self, channels_to_merge):
         """
         Fusione con policy ALL: restituisce solo le maschere che
@@ -95,23 +37,18 @@ class Fusion:
         """
         merged_masks = list()
         channel_names = list(channels_to_merge.keys())
-        while len(channel_names) > 0:
+        while len(channel_names) > 1:
             channel = channel_names.pop(0)
             masks = list(channels_to_merge[channel])
             masks = list(filter(lambda x: x['merged'] == False,masks))
+            print(f"{channel} has {len(masks)} masks")
             for mask in masks:
-                merged_mask = dict(mask)
-                found = False
                 for other_channel in channel_names:
                     other_masks = list(channels_to_merge[other_channel])
                     for other_mask in other_masks:
                         other_flag = Fusion.iou_overlap(mask['segmentation'], other_mask['segmentation'])
-                        found = found or other_flag
-                        if found:
-                            other_mask['merged'] = found
-                            mask['merged'] = found
+                        if other_flag:
                             merged_masks.append(mask)
-                            found = False
                         else:
                             continue
         return merged_masks
@@ -119,31 +56,32 @@ class Fusion:
     def __fusion_any(self, channels_to_merge):
         """
         Fusione con policy ANY: restituisce le maschere che
-        presenti in TUTTI i canali considerati, anche se non si sovrappongono.
+        presenti in TUTTI i canali considerati, anche se non si sovrappongono, senza duplicati.
         """
         merged_masks = list()
         channel_names = list(channels_to_merge.keys())
-        while len(channel_names) > 0:
+        while len(channel_names) > 1:
             channel = channel_names.pop(0)
             masks = list(channels_to_merge[channel])
             masks = list(filter(lambda x: x['merged'] == False,masks))
+            merged_masks.extend(masks)
+            print(f"Numero di maschere del channel {channel} : {len(masks)}\n")
+            print(f"Numero di maschere in merged : {len(merged_masks)}\n")
+            other_masks = list()
+            first = True
             for mask in masks:
-                saw = True
-                found = False
                 for other_channel in channel_names:
-                    other_masks = list(channels_to_merge[other_channel])
+                    if first:
+                        other_masks = list(channels_to_merge[other_channel])
+                        print(f"First: numero di maschere del channel {other_channel} : {len(other_masks)}\n")
+                        first = False
                     for other_mask in other_masks:
                         other_flag = Fusion.iou_overlap(mask['segmentation'], other_mask['segmentation'])
-                        found = found or other_flag
-                        if found:
-                            other_mask['merged'] = found
-                            mask['merged'] = found
-                            merged_masks.append(mask)
-                            found = False
-                        elif not found:
-                            other_mask['merged'] = saw
-                            mask['merged'] = found
-                            merged_masks.append(other_mask)
+                        other_mask['merged'] = other_flag
+                    other_masks = list(filter(lambda x: x['merged'] == False, other_masks))
+            print(f"Numero di maschere del secondo canale : {len(other_masks)}\n")
+            merged_masks.extend(other_masks)
+        print(f"Final: Numero di maschere in merged: {len(merged_masks)}\n")
         return merged_masks
 
     def __fusion_policy(self, channels_to_merge, k):
@@ -154,8 +92,6 @@ class Fusion:
                 return self.__fusion_all(channels_to_merge)
         except Exception as e:
             print(e)
-
-
 
 
     def mask_voting(self, mask_list: dict, channels: List[str]):
