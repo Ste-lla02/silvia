@@ -5,6 +5,7 @@ from src.segmentation.evaluator import MaskFeaturing
 from src.preprocessing.image_cropper import crop_image_with_polygon
 from src.preprocessing.preprocessing import splitting_broker
 from src.segmentation.sam_generator import Segmenter
+from src.spatial_analysis.spatial_analysis import Analysis
 from src.utils.configuration import Configuration
 from src.utils.utils import FileCleaner, send_ntfy_notification, send_ntfy_error
 from itertools import chain
@@ -32,11 +33,11 @@ def build(conf: Configuration):
                 f = MaskFeaturing()
                 for channel in channels:
                     to_segment = images.get_channel(image_name, channel)
-                    masks = segmenter.mask_generation(to_segment)
                     print(f"Masks Generation is running for channel {channel}...")
+                    masks = segmenter.mask_generation(to_segment)
+                    print(f"Filtering for channel {channel}...")
                     masks = list(filter(lambda x: f.filter(x), masks))
                     images.add_masks(image_name, masks, channel)
-                    print(f"Filtering for channel {channel}...")
                 # Serializing
                 images.save_pickle(image_name)
             except Exception as e:
@@ -51,16 +52,27 @@ def fusion(conf: Configuration):
     images.load_pickle()
     fusion_engine = Fusion(conf)
     channel_names = fusion_engine.get_channels()
-    merged_masks = list()
     for image_filename in images.get_base_images():
-        image_name = os.path.basename(image_filename).split('.')[0]
-        image = images.get_cropped(image_name)
-        masks = images.get_masks(image_name, channel_names)
+        print(f"Fusion is running for image {image_filename}...")
+        image = images.get_cropped(image_filename)
+        masks = images.get_masks(image_filename, channel_names)
         for mask in chain.from_iterable(masks.values()):
             mask['merged'] = False
         merged_masks = fusion_engine.mask_voting(masks, channel_names)
         images.add_fusion(merged_masks, image, image_filename)
+        # Serializing
+        images.save_fusion_pickle(image_filename)
     send_ntfy_notification(topic)
+
+def analysis(conf: Configuration):
+    topic = conf.get('ntfy_topic')
+    images = State(conf)
+    images.load_pickle()
+    analysis_engine = Analysis(conf)
+    for image_filename in images.get_base_images():
+        print(f"Analysis is running for image {image_filename}...")
+    #todo implemetare
+    pass
 
 def clean(conf: Configuration):
     cleaner = FileCleaner(conf)
@@ -69,7 +81,8 @@ def clean(conf: Configuration):
 functions = {
     'build': build,
     'clean': clean,
-    'fusion': fusion
+    'fusion': fusion,
+    'analysis': analysis
 }
 
 if __name__ == '__main__':
