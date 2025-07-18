@@ -17,6 +17,7 @@ class State:
         self.pickle = conf.get('picklefolder')
         self.save_flag = conf.get('save_images')
         self.fusion_directory = conf.get("fusionfolder")
+        self.fusion_pickle = conf.get("picklefusionfolder")
         self.clean()
 
     def clean(self):
@@ -144,5 +145,11 @@ class State:
             merged_mask = np.logical_or(merged_mask, mask['segmentation'])
         binary_image = (merged_mask * 255).astype(np.uint8)
         pil_img = Image.fromarray(binary_image)
-        filename = f"{image_filename}_fusion.png"
-        self.save_image_and_log(pil_img, self.fusion_directory, filename)
+        fusion_filename = f"{image_filename}_fusion.png"
+        self.save_image_and_log(pil_img, self.fusion_directory, fusion_filename)
+
+    def save_fusion_pickle(self, image_name):
+        fusion_filename = f"{image_name}_fusion.pickle"
+        output_path = os.path.join(self.fusion_pickle, fusion_filename)
+        with open(output_path, "wb") as f:
+            pickle.dump(self.images[image_name], f)

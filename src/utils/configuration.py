@@ -71,6 +71,8 @@ class Configuration(metaclass=Singleton):
             self.put('maskfolder', temp)
             temp = reader['main'].get('picklefolder', None)
             self.put('picklefolder', temp)
+            temp = reader['main'].get('picklefusionfolder', None)
+            self.put('picklefusionfolder', temp)
             temp = reader['main'].get('fusionfolder', None)
             self.put('fusionfolder', temp)
             temp = reader['main'].get('ntfy_topic', None)
