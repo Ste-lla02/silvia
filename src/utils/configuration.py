@@ -166,5 +166,10 @@ class Configuration(metaclass=Singleton):
             self.put('inter_slave_operator', temp)
             temp = reader['fusion'].get('inter_master_operator', 'any')
             self.put('inter_master_operator', temp)
+            temp = reader['fusion'].get('channel', 'fusion')
+            self.put('channel', temp)
+            # Analysis
+            temp = reader['analysis'].get('channel', 'fusion')
+            self.put('channel', temp)
         except Exception as s:
             print(s)

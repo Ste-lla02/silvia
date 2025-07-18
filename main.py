@@ -51,6 +51,7 @@ def fusion(conf: Configuration):
     images = State(conf)
     images.load_pickle()
     fusion_engine = Fusion(conf)
+    fusion_channel = fusion_engine.get_fusion_channel()
     channel_names = fusion_engine.get_channels()
     for image_filename in images.get_base_images():
         print(f"Fusion is running for image {image_filename}...")
@@ -59,9 +60,10 @@ def fusion(conf: Configuration):
         for mask in chain.from_iterable(masks.values()):
             mask['merged'] = False
         merged_masks = fusion_engine.mask_voting(masks, channel_names)
-        images.add_fusion(merged_masks, image, image_filename)
+        images.add_fusion(merged_masks, image, image_filename, fusion_channel)
         # Serializing
         images.save_fusion_pickle(image_filename)
+        images.save_pickle(image_filename)
     send_ntfy_notification(topic)
 
 def analysis(conf: Configuration):
@@ -69,8 +71,14 @@ def analysis(conf: Configuration):
     images = State(conf)
     images.load_pickle()
     analysis_engine = Analysis(conf)
+    channel_name = analysis_engine.get_channel()
     for image_filename in images.get_base_images():
         print(f"Analysis is running for image {image_filename}...")
+        image = images.get_channel(image_filename, channel_name)
+        masks = images.get_fusion_masks(image_filename)
+
+
+    send_ntfy_notification(topic)
     #todo implemetare
     pass
 
