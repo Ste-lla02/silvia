@@ -174,5 +174,7 @@ class Configuration(metaclass=Singleton):
             self.put('channels', temp)
             temp = reader['analysis'].get('analysisfolder', None)
             self.put('analysisfolder', temp)
+            temp = reader['analysis'].get('max_dist', 20.0)
+            self.put('max_dist', float(temp))
         except Exception as s:
             print(s)

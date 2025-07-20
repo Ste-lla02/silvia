@@ -7,14 +7,18 @@ class Analysis:
     def __init__(self, conf):
         self.folder = conf.get('analysisfolder')
         self.channels = conf.get('channels')
+        self.max_dist = conf.get('max_dist')
         self._next_c_id = 0
-        pass
+
 
     def get_channels(self):
         return list(self.channels)
 
     def get_analysisfolder(self):
         return self.folder
+
+    def get_max_dist(self):
+        return self.max_dist
 
     def save_analysisdata(self, folder_path, data, image_filename):
         file_name = f"{image_filename}_analysis.csv"
@@ -48,31 +52,27 @@ class Analysis:
             })
         return pd.DataFrame.from_records(records)
 
-    def match_mask_ids(self, prev_df: pd.DataFrame, curr_df: pd.DataFrame, max_dist: float = 1.0) -> pd.DataFrame:
-        """
-        Abbinamento greedy tra maschere di due DataFrame basato sulla distanza dei centroidi.
-        Se la distanza minima è <= max_dist, eredita lo stesso ID, altrimenti ne assegna uno nuovo.
-        """
-        curr_df = curr_df.copy()
-        curr_df['fc_id'] = -1
-        next_id = prev_df['fc_id'].max() + 1 if 'fc_id' in prev_df else 0
+    def match_mask_ids(self, prev_df: pd.DataFrame, curr_df: pd.DataFrame, max_dist):
+        curr = curr_df.copy()
 
-        used_prev = set()
-        for i, curr in curr_df.iterrows():
-            dy = prev_df['centroid_y'].values - curr['centroid_y']
-            dx = prev_df['centroid_x'].values - curr['centroid_x']
-            dists = np.hypot(dy, dx)
-            if len(dists) > 0:
-                j = np.argmin(dists)
-                if dists[j] <= max_dist and j not in used_prev:
-                    curr_df.at[i, 'fc_id'] = prev_df.at[j, 'fc_id']
-                    used_prev.add(j)
-                else:
-                    curr_df.at[i, 'fc_id'] = next_id
-                    next_id += 1
-            else:
-                # nessun precedente, assegna nuovo ID
-                curr_df.at[i, 'fc_id'] = next_id
-                next_id += 1
+        if prev_df is None or prev_df.empty:
+            return curr
 
+        prev_coords = prev_df[['centroid_x', 'centroid_y']].values
+        prev_ids = prev_df['c_id'].values
+
+        curr_coords = curr[['centroid_x', 'centroid_y']].values
+        for i, (x, y) in enumerate(curr_coords):
+            dists = np.hypot(prev_coords[:, 0] - x,
+                             prev_coords[:, 1] - y)
+            j = np.argmin(dists)
+            if dists[j] <= max_dist:
+                curr.at[i, 'c_id'] = int(prev_ids[j])
+        return curr
+
+    def add_date(self, curr_df: pd.DataFrame, image_filename):
+        base = os.path.splitext(image_filename)[0]
+        date_str = f"{base[:4]}-{base[4:6]}"
+        curr_df['date'] = date_str
         return curr_df
+
