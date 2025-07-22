@@ -7,7 +7,7 @@ class Fusion:
         self.slaves = conf.get('slaves')
         self.is_k = conf.get('inter_slave_operator')
         self.im_k = conf.get('inter_master_operator')
-        self.channel = conf.get('channel')
+        self.fusion_channel = conf.get('fusion_channel')
 
     def get_masters(self):
         return self.masters
@@ -20,7 +20,7 @@ class Fusion:
         retval.extend(self.slaves)
         return retval
     def get_fusion_channel(self):
-        return self.channel
+        return self.fusion_channel
 
     @staticmethod
     def iou_overlap(mask1, mask2):

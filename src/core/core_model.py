@@ -152,7 +152,10 @@ class State:
         self.save_image_and_log(pil_img, self.fusion_directory, fusion_filename)
 
     def clean_fusion(self, image_filename, channel):
-        self.images[image_filename]['masks'][channel]['singles'] = []
+        if channel not in self.images[image_filename]['masks']:
+            pass
+        else:
+            self.images[image_filename]['masks'][channel]['singles'] = []
 
     def get_fusion(self, image_name: str) -> Image:
         return self.images[image_name]['fusion']

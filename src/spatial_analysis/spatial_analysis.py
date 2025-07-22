@@ -6,7 +6,7 @@ import os
 class Analysis:
     def __init__(self, conf):
         self.folder = conf.get('analysisfolder')
-        self.channels = conf.get('channels')
+        self.channels = conf.get('analysis_channels')
         self.max_dist = conf.get('max_dist')
         self._next_c_id = 0
 
@@ -48,7 +48,9 @@ class Analysis:
                 'c_id': c_id,
                 'centroid_y': cy,
                 'centroid_x': cx,
-                'perimeter_px': perimeter
+                'perimeter_px': perimeter,
+                'inner_green': mask['inner_green'],
+                'outer_green': mask['outer_green'],
             })
         return pd.DataFrame.from_records(records)
 
