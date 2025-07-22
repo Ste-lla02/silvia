@@ -53,7 +53,6 @@ def ngrdi_ndvi(image, name):
         print(f"NGRDI Calculation Error with {name}: {e}")
     return NGRDI_image
 
-
 def exg_ndvi(image, name):
     ExG_image = None
     r, g, b, a = split_and_convert_all(image)
@@ -64,3 +63,31 @@ def exg_ndvi(image, name):
     except Exception as e:
         print(f"ExG Calculation Error with {name}: {e}")
     return ExG_image
+
+def inner_outer_green(splitted_img: np.ndarray, mask, channel) -> tuple[float,float]:
+    mask_seg = mask['segmentation']
+    bbox = mask['bbox']
+    splitted_img = np.array(splitted_img)
+
+    # estrai solo la bbox
+    xmin, ymin, w, h = map(int, bbox)
+    xmax, ymax = xmin + w, ymin + h
+    crop_gi = splitted_img[ymin:ymax, xmin:xmax]
+    crop_mask = mask_seg[ymin:ymax, xmin:xmax].astype(bool)
+
+    # estrai solo i pixel dentro la mask
+    m = mask_seg.astype(bool)
+    if m.sum() == 0:
+        pass
+    inner_vals = splitted_img[m]
+    inner_green = float(inner_vals.mean()) if inner_vals.size else 0.0
+
+    # 4) media fuori la maschera ma dentro la bbox
+    outside_mask = ~crop_mask
+    outside_vals = crop_gi[outside_mask]
+    outside_green = float(outside_vals.mean()) if outside_vals.size else 0.0
+
+    mask['inner_green'] = inner_green
+    mask['outer_green'] = outside_green
+
+    return mask

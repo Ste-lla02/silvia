@@ -1,5 +1,6 @@
 import sys, os
 from src.core.core_model import State
+from src.preprocessing.alternative_ndvi import inner_outer_green
 from src.segmentation.image_fusion import Fusion
 from src.segmentation.evaluator import MaskFeaturing
 from src.preprocessing.image_cropper import crop_image_with_polygon
@@ -33,11 +34,16 @@ def build(conf: Configuration):
                 f = MaskFeaturing()
                 for channel in channels:
                     to_segment = images.get_channel(image_name, channel)
-                    print(f"Masks Generation is running for channel {channel}...")
+                    print(f"Masks Generation is running for image {image_name} channel {channel}...")
                     masks = segmenter.mask_generation(to_segment)
-                    print(f"Filtering for channel {channel}...")
+                    print(f"Filtering for image {image_name} channel {channel}...")
                     masks = list(filter(lambda x: f.filter(x), masks))
                     images.add_masks(image_name, masks, channel)
+                    # Green Analysis
+                    for mask in masks:
+                        splitting_function = splitting_broker[channel]
+                        splitted = splitting_function(cropped_image, image_filename)
+                        inner_outer_green(splitted, mask, channel)
                 # Serializing
                 images.save_pickle(image_name)
             except Exception as e:
