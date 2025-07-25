@@ -168,6 +168,10 @@ class Configuration(metaclass=Singleton):
             self.put('inter_master_operator', temp)
             temp = reader['fusion'].get('fusion_channel', 'fusion')
             self.put('fusion_channel', temp)
+            temp = reader['fusion'].get('th1', 0)
+            self.put('th1', float(temp))
+            temp = reader['fusion'].get('th2', 1)
+            self.put('th2', float(temp))
             # Analysis
             temp = reader['analysis'].get('analysis_channels', [])
             temp = self.tolist(temp)
