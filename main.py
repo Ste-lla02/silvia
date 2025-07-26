@@ -1,7 +1,7 @@
 import sys, os
 from src.core.core_model import State
 from src.preprocessing.alternative_ndvi import inner_outer_green
-from src.segmentation.image_fusion import Fusion
+from src.segmentation.image_fusion import Fusion, bbox_from_mask
 from src.segmentation.evaluator import MaskFeaturing
 from src.preprocessing.image_cropper import crop_image_with_polygon
 from src.preprocessing.preprocessing import splitting_broker
@@ -39,7 +39,7 @@ def build(conf: Configuration):
                     print(f"Filtering for image {image_name} channel {channel}...")
                     masks = list(filter(lambda x: f.filter(x), masks))
                     images.add_masks(image_name, masks, channel)
-                    # Green Analysis
+                    # Green Analysis # todo spostare il calcolo del green in analisi perchè fusion ricalcola le bbox
                     for mask in masks:
                         splitting_function = splitting_broker[channel]
                         splitted = splitting_function(cropped_image, image_filename)
