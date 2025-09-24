@@ -9,6 +9,10 @@ class Analysis:
         self.channels = conf.get('analysis_channels')
         self.max_dist = conf.get('max_dist')
         self._next_c_id = 0
+        w = conf.get('real_width_m')
+        self.real_width_m = None if (float(w) == 0.0) else float(w)
+        h = conf.get('real_height_m')
+        self.real_height_m = None if (float(h) == 0.0) else float(h)
 
 
     def get_channels(self):
@@ -30,7 +34,25 @@ class Analysis:
         coords = np.argwhere(mask_segmentation)
         return tuple(coords.mean(axis=0))
 
-    def extract_mask_features(self, masks: list) -> pd.DataFrame:
+    def compute_perimeter_px(self, mask_segmentation) -> float:
+        return np.logical_xor(mask_segmentation, np.roll(mask_segmentation, 1, axis=0)).sum() + np.logical_xor(mask_segmentation, np.roll(mask_segmentation, 1, axis=1)).sum()
+
+    def compute_area_m2(self, pixel_area, height, width):
+        """
+        calcola l'area in m2 sulla base dell'area in pixel e la media della risoluzione spaziale dell'immagine.
+        """
+        if pixel_area is not None and self.real_width_m is not None and self.real_height_m is not None:
+            # Risoluzione (m/pixel)
+            res_x = self.real_width_m / width
+            res_y = self.real_height_m / height
+            res_avg = np.sqrt(res_x * res_y)
+            area_m2 = pixel_area * (res_avg ** 2)
+            return area_m2
+        else:
+            return None
+
+
+    def extract_mask_features(self, height, width, masks: list) -> pd.DataFrame:
         """
         Dà in input una lista di dizionari con chiave 'segmentation' e restituisce
         un DataFrame con le feature di ciascuna maschera e l'id temporale.
@@ -39,8 +61,10 @@ class Analysis:
         for mask in masks:
             seg = mask['segmentation']
             cy, cx = self.compute_centroid(seg)
-            perimeter = np.logical_xor(seg, np.roll(seg, 1, axis=0)).sum() + np.logical_xor(seg, np.roll(seg, 1,
-                                                                                                         axis=1)).sum()
+            perimeter_px = self.compute_perimeter_px(seg)
+            area_px = mask['area']
+            area_m2 = self.compute_area_m2(area_px, height, width)
+
             # genera qui l'id univoco: channel_id
             c_id = self._next_c_id
             self._next_c_id += 1
@@ -48,9 +72,13 @@ class Analysis:
                 'c_id': c_id,
                 'centroid_y': cy,
                 'centroid_x': cx,
-                'perimeter_px': perimeter,
+                'perimeter_px': perimeter_px,
+                'area_px': area_px,
+                'area_m2': area_m2,
                 'inner_green': mask['inner_green'],
                 'outer_green': mask['outer_green'],
+                'roundness': mask['roundness'],
+                'eccentricity': mask['eccentricity']
             })
         return pd.DataFrame.from_records(records)
 

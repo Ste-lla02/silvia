@@ -180,5 +180,9 @@ class Configuration(metaclass=Singleton):
             self.put('analysisfolder', temp)
             temp = reader['analysis'].get('max_dist', 20.0)
             self.put('max_dist', float(temp))
+            temp = reader['analysis'].get('real_height_m', 0.0)
+            self.put('real_height_m', float(temp))
+            temp = reader['analysis'].get('real_width_m', 0.0)
+            self.put('real_width_m', float(temp))
         except Exception as s:
             print(s)
