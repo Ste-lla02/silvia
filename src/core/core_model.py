@@ -72,6 +72,10 @@ class State:
             retval[channel] = self.images[image_name]['masks'][channel]['singles']
         return retval
 
+    def get_image_shape(self, image_name):
+        image = self.images[image_name]['original']
+        return image.shape
+
     def add_original(self, image_name, image):
         self.images[image_name]['cropped'] = image
         filename = f"{image_name}_cropped.png"

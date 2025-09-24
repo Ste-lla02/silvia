@@ -87,7 +87,8 @@ def analysis(conf: Configuration):
         masks = images.get_masks(image_filename, channel_names)
         for channel_name in channel_names:
             print(f"Analysis is running for image {image_filename} and channel {channel_name}...")
-            curr_df = analysis_engine.extract_mask_features(masks[channel_name])
+            height, width, _  = images.get_image_shape(image_filename)
+            curr_df = analysis_engine.extract_mask_features(height, width, masks[channel_name])
             curr_df = analysis_engine.add_date(curr_df, image_filename)
             if prev_dfs[channel_name] is not None:
                 curr_df = analysis_engine.match_mask_ids(prev_dfs[channel_name], curr_df, max_dist)
