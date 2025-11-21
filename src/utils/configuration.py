@@ -1,6 +1,6 @@
 import configparser
 from configparser import ConfigParser
-from src.utils import metaclasses
+import tempfile
 import ast
 from src.utils.metaclasses import Singleton
 
@@ -186,3 +186,30 @@ class Configuration(metaclass=Singleton):
             self.put('real_width_m', float(temp))
         except Exception as s:
             print(s)
+
+
+def folderextraction(confcontent):
+    tmp = tempfile.NamedTemporaryFile()
+    handler = open(tmp.name, 'w')
+    handler.write(confcontent)
+    handler.flush()
+    reader = configparser.ConfigParser()
+    reader.read(tmp.name)
+    try:
+        temp = reader['main']['outfolder']
+    except Exception as s:
+        temp = None
+    return temp
+
+def mongoextraction(confcontent):
+    tmp = tempfile.NamedTemporaryFile()
+    handler = open(tmp.name, 'w')
+    handler.write(confcontent)
+    handler.flush()
+    reader = configparser.ConfigParser()
+    reader.read(tmp.name)
+    try:
+        temp = reader['main']['outfolder']
+    except Exception as s:
+        temp = None
+    return temp
