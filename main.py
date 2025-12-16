@@ -39,7 +39,7 @@ def build(conf: Configuration):
                 final_masks = voter.mask_voting(image_masks)
                 # Serializing
                 images.save_pickle(image_name)
-                print(f"Pickle salvato: {image_name}.pickle")
+                print(f"Pickle saved: {image_name}.pickle")
             except Exception as e:
                 print(image_name, str(e))
                 send_ntfy_error(topic, image_name, str(e))

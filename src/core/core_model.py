@@ -129,4 +129,3 @@ class State:
             with open(input_path, "rb") as f:
                 temp = pickle.load(f)
                 self.images[image_name] = {**self.images, **temp}
-
