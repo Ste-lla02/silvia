@@ -1,5 +1,3 @@
-# SILVIA
-
 <h1 align="center">SILVIA
   <br/>
   <sub>Segmentation and Identification for satelLite Vegetation pattern ImAges</sub>
@@ -16,9 +14,15 @@
   <img src="Figures/silvia_pipeline.png" alt="SILVIA Pipeline Workflow" width="80%">
 </p>
 
-**SILVIA** (Segmentation and Identification for satelLite Vegetation pattern ImAges) is a modular image segmentation pipeline designed for the detection and analysis of vegetation patterns in high-resolution satellite imagery.
+**SILVIA** is a modular image segmentation pipeline designed for the detection and analysis of vegetation patterns in high-resolution satellite imagery.
 
 The framework integrates the Segment Anything Model (SAM) with domain-specific preprocessing, geometric filtering, and multi-channel mask fusion techniques to support robust and reproducible environmental analysis.
+
+**Relation to Other Projects**  
+
+SILVIA is the segmentation and analysis component of the **TITANIA** framework, a modular architecture designed to integrate satellite data acquisition and vegetation pattern analysis within a unified and reproducible workflow.
+
+Beyond environmental monitoring, the SILVIA pipeline has been adapted to other application domains, including medical image analysis. This cross-domain reuse highlights the domain-independent design of the pipeline and its suitability for different image-based analysis tasks.
 
 ---
 
@@ -41,7 +45,7 @@ SILVIA addresses these challenges by combining **foundation-model-based segmenta
 - **SAM-based segmentation**  
   Automatic generation of segmentation masks without task-specific training.
 
-- **Multi-representation processing**
+- **Multi-representation processing**  
   - RGB satellite images,
   - individual spectral channels,
   - vegetation index–derived images (e.g. ExG, NDVI when available).
@@ -52,7 +56,7 @@ SILVIA addresses these challenges by combining **foundation-model-based segmenta
   - eccentricity,
   - segmentation stability and quality scores.
 
-- **Multi-channel mask fusion**
+- **Multi-channel mask fusion**  
   Voting-based mechanisms to:
   - reduce false positives (FP),
   - reduce false negatives (FN),  
@@ -82,11 +86,81 @@ The SILVIA pipeline is structured into four main stages:
 4. **Channel Fusion**
    - voting-based fusion of masks obtained from different channels.
 
----
 
-## Installation
+---
+## Dependencies
+
+The framework is implemented in Python (version 3.9 recommended).
+
+All required Python packages and external dependencies are listed in the `requirements.txt` file provided in the repository. The recommended way to install the dependencies is:
 
 ```bash
-git clone https://github.com/Ste-lla02/silvia.git
-cd silvia
 pip install -r requirements.txt
+```
+
+---
+## Usage
+
+SILVIA is designed to be configured through user-defined parameters that control the behaviour of the pipeline, including:
+
+- segmentation model settings,
+- preprocessing options,
+- filtering thresholds,
+- fusion policies.
+
+A typical workflow involves the following steps:
+
+1. selecting a satellite image to analyse,
+2. configuring preprocessing and segmentation parameters,
+3. running the pipeline to obtain filtered and fused segmentation masks.
+
+Detailed usage examples and configuration files will be progressively added to the repository.
+
+---
+## Output
+
+The SILVIA pipeline produces the following outputs:
+
+- filtered segmentation masks,
+- fused mask representations obtained through channel voting,
+- geometric and quality metadata associated with each detected structure.
+
+These outputs can be used for:
+
+- spatial analysis of vegetation patterns,
+- temporal comparison across different acquisition times,
+- environmental monitoring and ecosystem studies.
+
+---
+
+## License
+The software is licensed according to the GNU General Public License v3.0 (see License file).
+
+## Citation and Contact
+
+**Citation**  
+
+If you find this work useful for your research, please consider citing:
+
+```bibtex
+@article{silvia2025,
+  title = {Detecting Vegetation Patterns in Satellite Images: {SILVIA}, a Segmentation-Based Approach},
+  author = {de Biase, Maria Stella and De Fazio, Roberta and Marrone, Stefano},
+  journal = {Procedia Computer Science},
+  year = {2025},
+  doi = {10.1016/j.procs.2025.10.020}
+}
+```
+
+**Contact**  
+For questions or collaborations:
+
+
+**Maria Stella de Biase**  
+University of Campania “Luigi Vanvitelli”  
+📧 mariastella.debiase@unicampania.it
+
+**Stefano Marrone**  
+University of Campania “Luigi Vanvitelli”  
+📧 stefano.marrone@unicampania.it
+
