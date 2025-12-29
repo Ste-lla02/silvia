@@ -4,6 +4,8 @@
 
 The framework integrates the Segment Anything Model (SAM) with domain-specific preprocessing, geometric filtering, and multi-channel mask fusion techniques to support robust and reproducible environmental analysis.
 
+![Workflow](https://github.com/Ste-lla02/silvia/blob/main/silvia_pipeline.pdf)
+
 ---
 
 ## Motivation
