@@ -1,10 +1,24 @@
 # SILVIA
 
+<h1 align="center">SILVIA
+  <br/>
+  <sub>Segmentation and Identification for satelLite Vegetation pattern ImAges</sub>
+</h1>
+
+<p align="center">
+  <a href="https://python.org"><img alt="Python" src="https://img.shields.io/badge/Python-3.9+-3776AB?logo=python&logoColor=white"></a>
+  <img alt="OS" src="https://img.shields.io/badge/OS-Linux%20%7C%20macOS%20%7C%20Windows-informational">
+  <a href="https://github.com/facebookresearch/segment-anything"><img alt="SAM2" src="https://img.shields.io/badge/SAM-v2-blue"></a>
+  <a href="https://github.com/Ste-lla02/silvia/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Ste-lla02/silvia?style=social"></a>
+</p>
+
+<p align="center">
+  <img src="Figures/silvia_pipeline.png" alt="SILVIA Pipeline Workflow" width="80%">
+</p>
+
 **SILVIA** (Segmentation and Identification for satelLite Vegetation pattern ImAges) is a modular image segmentation pipeline designed for the detection and analysis of vegetation patterns in high-resolution satellite imagery.
 
 The framework integrates the Segment Anything Model (SAM) with domain-specific preprocessing, geometric filtering, and multi-channel mask fusion techniques to support robust and reproducible environmental analysis.
-
-![Workflow](https://github.com/Ste-lla02/silvia/blob/main/silvia_pipeline.pdf)
 
 ---
 
