@@ -22,7 +22,10 @@ The framework integrates the Segment Anything Model (SAM) with domain-specific p
 
 SILVIA is the segmentation and analysis component of the **TITANIA** framework, a modular architecture designed to integrate satellite data acquisition and vegetation pattern analysis within a unified and reproducible workflow.
 
+In particular, SILVIA is designed to process data acquired through **[DAPHNE](https://github.com/stefanomarrone/daphne)**, the data acquisition module of the TITANIA framework.
+
 Beyond environmental monitoring, the SILVIA pipeline has been adapted to other application domains, including medical image analysis. This cross-domain reuse highlights the domain-independent design of the pipeline and its suitability for different image-based analysis tasks.
+
 
 ---
 
