@@ -133,9 +133,24 @@ These outputs can be used for:
 
 ---
 
+## Replication Package
+
+A replication package will be provided to support reproducibility of the experiments reported in the scientific publications associated with SILVIA.
+
+The package will be released under the `replication/` directory and will include:
+- configuration files used to run the pipeline on the case studies,
+- scripts to reproduce the main results,
+- example inputs (or instructions to retrieve them, when redistribution is not possible),
+- output artifacts (e.g., masks, logs, and computed metrics) required to replicate the reported experiments.
+
+At the current stage, this material is **under preparation** and will be added in a future update of the repository.
+
+---
+
 ## License
 The software is licensed according to the GNU General Public License v3.0 (see License file).
 
+---
 ## Citation and Contact
 
 **Citation**  
@@ -164,3 +179,4 @@ University of Campania “Luigi Vanvitelli”
 University of Campania “Luigi Vanvitelli”  
 📧 stefano.marrone@unicampania.it
 
+---
