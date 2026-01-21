@@ -1,7 +1,7 @@
 from src.preprocessing.bands_split import red, blue, green, alpha
 from src.preprocessing.alternative_ndvi import *
 
-def plain(image, name):
+def plain(image):
     return image
 
 splitting_broker = {

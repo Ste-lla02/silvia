@@ -38,9 +38,6 @@ class Analysis:
         return np.logical_xor(mask_segmentation, np.roll(mask_segmentation, 1, axis=0)).sum() + np.logical_xor(mask_segmentation, np.roll(mask_segmentation, 1, axis=1)).sum()
 
     def compute_area_m2(self, pixel_area, height, width):
-        """
-        calcola l'area in m2 sulla base dell'area in pixel e la media della risoluzione spaziale dell'immagine.
-        """
         if pixel_area is not None and self.real_width_m is not None and self.real_height_m is not None:
             # Risoluzione (m/pixel)
             res_x = self.real_width_m / width
@@ -53,10 +50,6 @@ class Analysis:
 
 
     def extract_mask_features(self, height, width, masks: list) -> pd.DataFrame:
-        """
-        Dà in input una lista di dizionari con chiave 'segmentation' e restituisce
-        un DataFrame con le feature di ciascuna maschera e l'id temporale.
-        """
         records = []
         for mask in masks:
             seg = mask['segmentation']
@@ -65,7 +58,6 @@ class Analysis:
             area_px = mask['area']
             area_m2 = self.compute_area_m2(area_px, height, width)
 
-            # genera qui l'id univoco: channel_id
             c_id = self._next_c_id
             self._next_c_id += 1
             records.append({

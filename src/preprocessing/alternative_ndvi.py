@@ -69,20 +69,17 @@ def inner_outer_green(splitted_img: np.ndarray, mask, channel) -> tuple[float,fl
     bbox = mask['bbox']
     splitted_img = np.array(splitted_img)
 
-    # estrai solo la bbox
     xmin, ymin, w, h = map(int, bbox)
     xmax, ymax = xmin + w, ymin + h
     crop_gi = splitted_img[ymin:ymax, xmin:xmax]
     crop_mask = mask_seg[ymin:ymax, xmin:xmax].astype(bool)
 
-    # estrai solo i pixel dentro la mask
     m = mask_seg.astype(bool)
     if m.sum() == 0:
         pass
     inner_vals = splitted_img[m]
     inner_green = float(inner_vals.mean()) if inner_vals.size else 0.0
 
-    # 4) media fuori la maschera ma dentro la bbox
     outside_mask = ~crop_mask
     outside_vals = crop_gi[outside_mask]
     outside_green = float(outside_vals.mean()) if outside_vals.size else 0.0
