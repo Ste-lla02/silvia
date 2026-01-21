@@ -37,14 +37,14 @@ class State:
         base_image = self.get_channel(image_name, channel)
         if len(masks) > 0:
             h, w = masks[0]['segmentation'].shape
-            overlay = np.zeros((h, w, 3), dtype=np.uint8)  # Immagine vuota per le maschere
+            overlay = np.zeros((h, w, 3), dtype=np.uint8)
             for mask in masks:
-                mask_img = mask['segmentation'].astype(np.uint8)  # Converti la maschera in uint8 (0-1 -> 0-255)
-                color = np.random.randint(0, 255, (3,), dtype=np.uint8)  # Colore casuale
-                overlay[mask_img > 0] = color  # Applica colore alla maschera
+                mask_img = mask['segmentation'].astype(np.uint8)
+                color = np.random.randint(0, 255, (3,), dtype=np.uint8)
+                overlay[mask_img > 0] = color
             if base_image is not None:
                 base_img = pil_to_cv2(base_image)
-                base_img = cv2.cvtColor(base_img, cv2.COLOR_RGB2BGR)  # Converti in BGR se l'immagine di base è RGB
+                base_img = cv2.cvtColor(base_img, cv2.COLOR_RGB2BGR)
                 alpha = 0.35
                 blended = cv2.addWeighted(base_img, 1 - alpha, overlay, alpha, 0)
             else:

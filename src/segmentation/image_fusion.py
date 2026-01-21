@@ -1,5 +1,6 @@
 from typing import List
 import numpy as np
+import itertools
 
 from src.utils.configuration import Configuration
 
@@ -30,6 +31,7 @@ class Fusion:
         self.fusion_channel = conf.get('fusion_channel')
         self.th1=conf.get('th1')
         self.th2=conf.get('th2')
+        self._id_counter = itertools.count(0)
 
     def get_masters(self):
         return self.masters
@@ -83,11 +85,9 @@ class Fusion:
 
     def __fusion_all(self, channels_to_merge):
         """
-        Fusione con policy ALL: restituisce solo le maschere che
-        si sovrappongono in TUTTI i canali considerati.
+        Fusion with ALL policy: returns only the masks that overlap across ALL
+        the considered channels.
         """
-        conf = Configuration()
-        fusion_engine = Fusion(conf)
         merged_masks = list()
         channel_names = list(channels_to_merge.keys())
         while len(channel_names) > 1:
@@ -99,19 +99,16 @@ class Fusion:
                 for other_channel in channel_names:
                     other_masks = list(channels_to_merge[other_channel])
                     for other_mask in other_masks:
-                        m = fusion_engine.iou_overlap(mask, other_mask)
+                        m = Fusion.iou_overlap(self, mask, other_mask)
                         if m is not None:
                             merged_masks.append(m)
-                        #todo fare in modo che funzioni per entrambe le policy
         return merged_masks
 
     def __fusion_any(self, channels_to_merge):
         """
-        Fusione con policy ANY: restituisce le maschere che
-        presenti in TUTTI i canali considerati, anche se non si sovrappongono, senza duplicati.
+        Fusion with ANY policy: returns the masks that are present in ALL the
+        considered channels, even if they do not overlap, without duplicates.
         """
-        conf = Configuration()
-        fusion_engine = Fusion(conf)
         merged_masks = list()
         channel_names = list(channels_to_merge.keys())
         while len(channel_names) > 1:
@@ -119,34 +116,34 @@ class Fusion:
             masks = list(channels_to_merge[channel])
             masks = list(filter(lambda x: x['merged'] == False,masks))
             merged_masks.extend(masks)
-            #print(f"Numero di maschere del channel {channel} : {len(masks)}\n")
-            #print(f"Numero di maschere in merged : {len(merged_masks)}\n")
             other_masks = list()
             first = True
             for mask in masks:
                 for other_channel in channel_names:
                     if first:
                         other_masks = list(channels_to_merge[other_channel])
-                        #print(f"First: numero di maschere del channel {other_channel} : {len(other_masks)}\n")
                         first = False
                     for other_mask in other_masks:
-                        other_flag = fusion_engine.iou_overlap(mask['segmentation'], other_mask['segmentation'])
+                        other_flag = Fusion.iou_overlap(self, mask, other_mask)
                         other_mask['merged'] = other_flag
                     other_masks = list(filter(lambda x: x['merged'] == False, other_masks))
-            #print(f"Numero di maschere del secondo canale : {len(other_masks)}\n")
             merged_masks.extend(other_masks)
-        #print(f"Final: Numero di maschere in merged: {len(merged_masks)}\n")
         return merged_masks
 
-    def __fusion_policy(self, channels_to_merge, k):#todo limitazione: PER ADESSO LE FUSION LAVORANO CONFRONTANDO SOLO 2 CANALI PER VOLTA
-        try:
-            if k == 'any':
-                return self.__fusion_any(channels_to_merge)
-            elif k == 'all':
-                return self.__fusion_all(channels_to_merge)
-        except Exception as e:
-            print(e)
+    def __fusion_policy(self, channels_to_merge, k):
+        if not channels_to_merge:
+            return []
+        if k == 'any':
+            return self.__fusion_any(channels_to_merge)
+        if k == 'all':
+            return self.__fusion_all(channels_to_merge)
+        raise ValueError(f"Unknown fusion policy: {k}")
 
+    def _ensure_id(self, masks: List[dict] | None):
+        for mask in masks:
+            if 'id' not in mask or mask['id'] is None:
+                mask['id'] = str(next(self._id_counter))
+        return masks
 
     def mask_voting(self, mask_list: dict, channels: List[str]):
         internal_slaves = {key: mask_list[key] for key in channels if key in self.slaves}
@@ -156,4 +153,5 @@ class Fusion:
         internal_masters['slaves_merged'] = slave_fusion
 
         final = self.__fusion_policy(internal_masters, self.im_k)
+        final = self._ensure_id(final)
         return final
