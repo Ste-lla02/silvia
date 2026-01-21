@@ -37,7 +37,7 @@ def main():
     parser.add_argument(
         "--steps",
         type=str,
-        default="fusion",
+        default="build,fusion",
         help="Comma-separated steps to run. Default: clean,build,fusion",
     )
     args = parser.parse_args()
