@@ -25,7 +25,7 @@ def main():
     parser.add_argument(
         "--project-root",
         type=str,
-        default="/Users/stella/programming/mat4pat_segmentation/",
+        default="..",
         help="Path to the project root (where your original main script lives).",
     )
     parser.add_argument(
