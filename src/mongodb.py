@@ -1,7 +1,9 @@
 import requests
 from src.models import FileResponse
+from utils.configuration import Configuration
 
-class MongoWriter:
+
+class MongoInterface:
     def __init__(self, iip, pport):
         self.ip = iip
         self.port = pport
@@ -17,3 +19,19 @@ class MongoWriter:
         except Exception:
             pass
         return retval
+
+    def read(self, name):
+        conf = Configuration()
+        mongoport = conf.get('mongo_port')
+        mongoip = conf.get('mongo_address')
+        mongourl = ('http://' + mongoip + ':' + str(mongoport) + '/matforpat?identifier=' + str(t_req.modelid) +
+                    '&version=' + str(t_req.modelversion))
+        resp = requests.get(url=mongourl)
+        tmp = tempfile.NamedTemporaryFile()
+        handler = open(tmp.name, 'wb')
+        handler.write(resp.content)
+        handler.flush()
+        reader = open(tmp.name, 'rb')
+        fileContent = reader.read()
+        trainedmodel = TrainedModel()
+        trainedmodel.load(fileContent)

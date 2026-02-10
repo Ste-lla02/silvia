@@ -1,0 +1,22 @@
+{
+   "analyses":[
+      {
+         "configurationname":"first_experiment",
+         "files":[
+			"output/MODIS_lat-1.346889_lon36.860099_2023-06-01_12_to_2024-05-01_12.zip",
+			"output/LANDSAT09_lat-28.03897_lon18.105889_2023-06-01_12_to_2024-05-01_12.zip",
+			"output/MODIS_lat-28.03897_lon18.105889_2023-06-01_12_to_2024-05-01_12.zip",
+            "output/LANDSAT09_lat-1.346889_lon36.860099_2023-06-01_12_to_2024-05-01_12.zip"	
+         ]
+      },
+      {
+         "configurationname":"second_experiment",
+         "files":[
+			"output/MODIS_lat-1.346889_lon36.860099_2023-06-01_12_to_2024-05-01_12.zip",
+			"output/LANDSAT09_lat-28.03897_lon18.105889_2023-06-01_12_to_2024-05-01_12.zip",
+			"output/MODIS_lat-28.03897_lon18.105889_2023-06-01_12_to_2024-05-01_12.zip",
+			"output/LANDSAT09_lat-1.346889_lon36.860099_2023-06-01_12_to_2024-05-01_12.zip"
+         ]
+      }
+   ]
+}
