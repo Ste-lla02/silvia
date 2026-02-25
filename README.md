@@ -148,6 +148,15 @@ The package will be released under the `replication/` directory and will include
 
 At the current stage, this material is **under preparation** and will be added in a future update of the repository.
 
+
+---
+
+## Acknowledgement
+
+This software has been supported by Italian Ministry of University and Research (MIUR), PNRR PRIN 2022 Project: A multidisciplinary approach to evaluate ecosystems resilience under climate
+change (*MatForPat*), Grant no. P2022WC2ZZ.
+
+
 ---
 
 ## License
