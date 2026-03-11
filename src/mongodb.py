@@ -1,7 +1,10 @@
+import os
+import zipfile
+
 import requests
 from src.models import FileResponse
 from utils.configuration import Configuration
-
+import tempfile
 
 class MongoInterface:
     def __init__(self, iip, pport):
@@ -20,18 +23,13 @@ class MongoInterface:
             pass
         return retval
 
-    def read(self, name):
-        conf = Configuration()
-        mongoport = conf.get('mongo_port')
-        mongoip = conf.get('mongo_address')
-        mongourl = ('http://' + mongoip + ':' + str(mongoport) + '/matforpat?identifier=' + str(t_req.modelid) +
-                    '&version=' + str(t_req.modelversion))
+    def read(self, name: str) -> str:
+        mongourl = 'http://' + self.ip + ':' + str(self.port) + '/matforpat?configuration_name=' + name
         resp = requests.get(url=mongourl)
-        tmp = tempfile.NamedTemporaryFile()
-        handler = open(tmp.name, 'wb')
-        handler.write(resp.content)
-        handler.flush()
-        reader = open(tmp.name, 'rb')
-        fileContent = reader.read()
-        trainedmodel = TrainedModel()
-        trainedmodel.load(fileContent)
+        tmpdirname = tempfile.mkdtemp()  # Nessun auto-cleanup!
+        file_path = os.path.join(tmpdirname, name + '.zip')
+        with open(file_path, 'wb') as handler:
+            handler.write(resp.content)
+        with zipfile.ZipFile(file_path, 'r') as zf:
+            zf.extractall(tmpdirname)
+        return tmpdirname

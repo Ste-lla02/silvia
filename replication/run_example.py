@@ -31,7 +31,7 @@ def main():
     parser.add_argument(
         "--entrypoint",
         type=str,
-        default="main.py",
+        default="core_functions.py",
         help="Entrypoint script (relative to project root).",
     )
     parser.add_argument(

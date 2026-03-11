@@ -4,7 +4,7 @@ import requests
 import json
 
 
-time.sleep(5)
+time.sleep(7)
 url = "http://127.0.0.1:1814/execute"
 file_path = os.path.join('inputs', 'input.json')
 with open(file_path, 'r') as file:

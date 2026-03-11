@@ -3,12 +3,12 @@ from configparser import ConfigParser
 import tempfile
 import ast
 from src.utils.metaclasses import Singleton
-
+import io
 
 class Configuration(metaclass=Singleton):
-    def __init__(self, inifilename):
+    def __init__(self, content = ""):
         self.board = dict()
-        self.load(inifilename)
+        self.load(content)
 
     def get(self, key):
         return self.board[key]
@@ -56,11 +56,15 @@ class Configuration(metaclass=Singleton):
         retval[option] = temp
         return retval
 
-    def load(self, inifile):
+    def load(self, configuration_content):
         reader = ConfigParser()
-        reader.read(inifile)
+        reader.read_string(configuration_content)
         try:
             # Main
+            temp = reader['main'].get('mongo_ip',None)
+            self.put('mongo_ip', temp)
+            temp = reader['main'].get('mongo_port',None)
+            self.put('mongo_port', int(temp))
             temp = reader['main'].get('imagefolder',None)
             self.put('imagefolder', temp)
             temp = reader['main'].get('croppedfolder', None)

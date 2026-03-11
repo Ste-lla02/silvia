@@ -1,10 +1,12 @@
 import glob
-from src.utils.configuration import folderextraction
-#from src.core import grab
-from src.mongodb import MongoInterface
+import os
+
+from core.core_functions import Processor
+from mongodb import MongoInterface
 from src.models import *
 from fastapi import APIRouter
-from src.utils.utils import messagemaker
+
+from utils.configuration import Configuration
 
 router = APIRouter()
 
@@ -13,19 +15,20 @@ async def create_item(item: Request):
     response = Response(list())
     for analysis in item.analyses:
         name = analysis.experimentname
-        files = analysis.files
         content = analysis.configuration
+        configuration = Configuration(content)
+        mongo_ip = configuration.get('mongo_ip')
+        mongo_port = configuration.get('mongo_port')
 
-
-        folder = folderextraction(content)
-
-        pass
-    #     writer = MongoWriter(router.mongodb_address, router.mongodb_port)
-    #     image_retval, data_retval = None, None #grab(content) todo: qui non c'è un grab quindi bisogna modificare
-    #     message = messagemaker(image_retval, data_retval)
-    #     single_response = SingleResponse(name, image_retval and data_retval, message, list())
-    #     for file in glob.glob(folder + "/*"):
-    #         fileresponse = writer.write(name, file)
-    #         single_response.files.append(fileresponse)
-    #     response.reponses.append(single_response)
+        #todo: cancellare la riga successiva a run eseguito
+        #folder = folderextraction(content)
+        mongo_client = MongoInterface(mongo_ip, mongo_port)
+        processor = Processor(configuration)
+        temp_dir_name = mongo_client.read(name)
+        files = glob.glob(temp_dir_name + "/*")
+        for file in files:
+            if not os.path.splitext(os.path.basename(file))[1].lower() == '.zip':
+                processor.full_process([file])
+                pass
+        #     writer = MongoWriter(router.mongodb_address, router.mongodb_port)
     return response.dict()
