@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="Figures/silvia_pipeline.png" alt="SILVIA Pipeline Workflow" width="80%">
+  <img src="legacy/Figures/silvia_pipeline.png" alt="SILVIA Pipeline Workflow" width="80%">
 </p>
 
 **SILVIA** is a modular image segmentation pipeline designed for the detection and analysis of vegetation patterns in high-resolution satellite imagery.

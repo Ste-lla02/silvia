@@ -23,13 +23,13 @@ class MongoInterface:
             pass
         return retval
 
-    def read(self, name: str) -> str:
+    def read(self, name: str, base_folder: str, src_folder: str) -> str:
         mongourl = 'http://' + self.ip + ':' + str(self.port) + '/matforpat?configuration_name=' + name
         resp = requests.get(url=mongourl)
-        tmpdirname = tempfile.mkdtemp()  # Nessun auto-cleanup!
+        tmpdirname = tempfile.mkdtemp(dir=base_folder)
         file_path = os.path.join(tmpdirname, name + '.zip')
         with open(file_path, 'wb') as handler:
             handler.write(resp.content)
         with zipfile.ZipFile(file_path, 'r') as zf:
-            zf.extractall(tmpdirname)
+            zf.extractall(tmpdirname + '/' + src_folder)
         return tmpdirname

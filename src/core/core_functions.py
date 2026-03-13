@@ -22,7 +22,7 @@ class Processor:
 
     def build(self, image_name_list):
         # Starting
-        images = State(self.conf)
+        images = State(self.conf, image_name_list)
         topic = self.conf.get('ntfy_topic')
         for image_filename in image_name_list:
             # Cropping

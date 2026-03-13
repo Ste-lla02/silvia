@@ -65,6 +65,8 @@ class Configuration(metaclass=Singleton):
             self.put('mongo_ip', temp)
             temp = reader['main'].get('mongo_port',None)
             self.put('mongo_port', int(temp))
+            temp = reader['main'].get('basefolder',None)
+            self.put('basefolder', temp)
             temp = reader['main'].get('imagefolder',None)
             self.put('imagefolder', temp)
             temp = reader['main'].get('croppedfolder', None)

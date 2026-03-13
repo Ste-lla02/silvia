@@ -19,16 +19,10 @@ async def create_item(item: Request):
         configuration = Configuration(content)
         mongo_ip = configuration.get('mongo_ip')
         mongo_port = configuration.get('mongo_port')
-
-        #todo: cancellare la riga successiva a run eseguito
-        #folder = folderextraction(content)
         mongo_client = MongoInterface(mongo_ip, mongo_port)
         processor = Processor(configuration)
-        temp_dir_name = mongo_client.read(name)
-        files = glob.glob(temp_dir_name + "/*")
-        for file in files:
-            if not os.path.splitext(os.path.basename(file))[1].lower() == '.zip':
-                processor.full_process([file])
-                pass
+        temp_dir_name = mongo_client.read(name, configuration.get('basefolder'), 'src')
+        processor.full_process(temp_dir_name)
+        pass
         #     writer = MongoWriter(router.mongodb_address, router.mongodb_port)
     return response.dict()

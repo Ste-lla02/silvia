@@ -8,7 +8,7 @@ import pickle
 from src.utils.utils import cv2_to_pil, pil_to_cv2
 
 class State:
-    def __init__(self, conf):
+    def __init__(self, conf, image_list):
         self.input_directory = conf.get('imagefolder')
         self.filetype = conf.get('imagetype')
         self.cropped_directory = conf.get('croppedfolder')
@@ -18,9 +18,21 @@ class State:
         self.save_flag = conf.get('save_images')
         self.fusion_directory = conf.get("fusionfolder")
         self.fusion_pickle = conf.get("picklefusionfolder")
-        self.clean()
+        self.clean_and_set()
 
     def clean(self):
+        filenames = list(os.listdir(self.input_directory))
+        filenames = list(filter(lambda x: x.lower().endswith((self.filetype)), filenames))
+        self.images = dict()
+        for filename in filenames:
+            image_name = os.path.basename(filename).split('.')[0]
+            self.images[image_name] = {}
+            image_path = os.path.join(self.input_directory,filename)
+            image = Image.open(image_path)
+            self.images[image_name]['original'] = image
+            self.images[image_name]['masks'] = {}
+
+    def clean_and_set(self):
         filenames = list(os.listdir(self.input_directory))
         filenames = list(filter(lambda x: x.lower().endswith((self.filetype)), filenames))
         self.images = dict()
