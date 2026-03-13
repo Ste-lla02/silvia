@@ -8,18 +8,18 @@ def split_and_convert_all(image):
     a = np.array(a, dtype=np.float32)
     return r, g, b, a
 
-def red(image):
+def red(image, name):
     r, _, _, _ = image.split()
     return r
 
-def green(image):
+def green(image, name):
     _, g, _, _ = image.split()
     return g
 
-def blue(image):
+def blue(image, name):
     _, _, b, _ = image.split()
     return b
 
-def alpha(image):
+def alpha(image, name):
     _, _, _, a = image.split()
     return a

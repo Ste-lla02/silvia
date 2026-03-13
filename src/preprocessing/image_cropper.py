@@ -3,8 +3,7 @@ from src.utils.configuration import Configuration
 from src.utils.utils import adjust_coordinate_rectangle
 
 
-def crop_image_with_polygon(image):
-    configuration = Configuration()
+def crop_image_with_polygon(image, configuration):
     points = configuration.get('areaofinterest_image')
     scaling_factor = configuration.get("image_scaling")
     mask = Image.new("L", image.size, 0)

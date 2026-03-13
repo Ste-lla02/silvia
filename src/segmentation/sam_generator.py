@@ -7,8 +7,8 @@ from src.utils.utils import pil_to_cv2, wget_download
 import os
 
 class Segmenter:
-    def __init__(self):
-        configuration = Configuration()
+    def __init__(self, configuration):
+        self.conf = configuration
         # sam model file and parameters
         model_path = configuration.get('sam_model')
         sam_platform = configuration.get('sam_platform')
@@ -40,7 +40,7 @@ class Segmenter:
         cv2_image = pil_to_cv2(image)
         colored_image = cv2.cvtColor(cv2_image, cv2.COLOR_BGR2RGB)
         masks = self.mask_generator.generate(colored_image)
-        f = MaskFeaturing()
+        f = MaskFeaturing(self.conf)
         for i, mask in enumerate(masks):
             id = {'id': i}
             properties = f.evaluation(mask)

@@ -8,31 +8,19 @@ import pickle
 from src.utils.utils import cv2_to_pil, pil_to_cv2
 
 class State:
-    def __init__(self, conf, image_list):
-        self.input_directory = conf.get('imagefolder')
-        self.filetype = conf.get('imagetype')
-        self.cropped_directory = conf.get('croppedfolder')
-        self.splitting_directory = conf.get('splittedfolder')
-        self.mask_directory = conf.get("maskfolder")
-        self.pickle = conf.get('picklefolder')
+    def __init__(self, conf, base_folder: str):
         self.save_flag = conf.get('save_images')
-        self.fusion_directory = conf.get("fusionfolder")
-        self.fusion_pickle = conf.get("picklefusionfolder")
-        self.clean_and_set()
+        self.filetype = conf.get('imagetype')
+        self.input_directory = base_folder + '/' + conf.get('imagefolder')
+        self.cropped_directory = base_folder + '/' + conf.get('croppedfolder')
+        self.splitting_directory = base_folder + '/' + conf.get('splittedfolder')
+        self.mask_directory = base_folder + '/' + conf.get("maskfolder")
+        self.pickle = base_folder + '/' + conf.get('picklefolder')
+        self.fusion_directory = base_folder + '/' + conf.get("fusionfolder")
+        self.fusion_pickle = base_folder + '/' + conf.get("picklefusionfolder")
+        self.clean()
 
     def clean(self):
-        filenames = list(os.listdir(self.input_directory))
-        filenames = list(filter(lambda x: x.lower().endswith((self.filetype)), filenames))
-        self.images = dict()
-        for filename in filenames:
-            image_name = os.path.basename(filename).split('.')[0]
-            self.images[image_name] = {}
-            image_path = os.path.join(self.input_directory,filename)
-            image = Image.open(image_path)
-            self.images[image_name]['original'] = image
-            self.images[image_name]['masks'] = {}
-
-    def clean_and_set(self):
         filenames = list(os.listdir(self.input_directory))
         filenames = list(filter(lambda x: x.lower().endswith((self.filetype)), filenames))
         self.images = dict()
@@ -126,12 +114,14 @@ class State:
 
     def save_image_and_log(self, image, directory, filename):
         if self.save_flag:
+            os.makedirs(directory, exist_ok=True)  # Crea directory se non esiste
             output_path = os.path.join(directory, filename)
             image.save(output_path)
             print(f"Immagine salvata: {output_path}")
 
     def save_pickle(self, image_name):
         filename = f'{image_name}.pickle'
+        os.makedirs(self.pickle, exist_ok=True)  # Crea directory se non esiste
         output_path = os.path.join(self.pickle,filename)
         with open(output_path, "wb") as f:
             pickle.dump(self.images[image_name], f)
@@ -168,9 +158,7 @@ class State:
         self.save_image_and_log(pil_img, self.fusion_directory, fusion_filename)
 
     def clean_fusion(self, image_filename, channel):
-        if channel not in self.images[image_filename]['masks']:
-            pass
-        else:
+        if channel in self.images[image_filename]['masks']:
             self.images[image_filename]['masks'][channel]['singles'] = []
 
     def get_fusion(self, image_name: str) -> Image:
@@ -178,6 +166,7 @@ class State:
 
     def save_fusion_pickle(self, image_name):
         fusion_filename = f"{image_name}_fusion.pickle"
+        os.makedirs(self.fusion_pickle, exist_ok=True)  # Crea directory se non esiste
         output_path = os.path.join(self.fusion_pickle, fusion_filename)
         with open(output_path, "wb") as f:
             pickle.dump(self.images[image_name], f)

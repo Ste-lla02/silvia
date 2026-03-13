@@ -3,10 +3,9 @@ from configparser import ConfigParser
 import tempfile
 import ast
 from src.utils.metaclasses import Singleton
-import io
 
 class Configuration(metaclass=Singleton):
-    def __init__(self, content = ""):
+    def __init__(self, content):
         self.board = dict()
         self.load(content)
 

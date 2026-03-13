@@ -20,8 +20,8 @@ class MaskFeaturing:
         'max_pixels': ('pixels',compute_pixels,leq,'max_pixels')
     }
 
-    def __init__(self):
-        self.configuration = Configuration()
+    def __init__(self, conf):
+        self.configuration = conf
 
     def single_filter(self, mask, filter) -> bool:
         property, _, op, argument = MaskFeaturing.mapping[filter]
