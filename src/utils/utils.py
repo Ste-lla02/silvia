@@ -1,5 +1,7 @@
 from src.utils.configuration import Configuration
 import shutil, os, getpass, socket, numpy as np, cv2, requests
+import rasterio
+import numpy as np
 from PIL import Image
 
 def leq(a: float, b: float) -> bool:
@@ -96,3 +98,19 @@ def messagemaker(image_flag, data_flag):
     }
     message = responses[(image_flag, data_flag)]
     return message
+
+def normalize_band(band):
+    band = band.astype(np.float32)
+    band = np.nan_to_num(band)
+    return ((band - band.min()) / (band.max() - band.min()) * 255).astype(np.uint8)
+
+def tif_to_png(tif_path, png_path):
+    with rasterio.open(tif_path) as src:
+        bands = src.read()
+    bands_norm = [normalize_band(b) for b in bands]
+    if len(bands_norm) >= 3:
+        rgb = np.stack(bands_norm[:3], axis=-1)
+    else:
+        rgb = np.stack([bands_norm[0]] * 3, axis=-1)
+    Image.fromarray(rgb).save(png_path)
+
