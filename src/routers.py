@@ -25,7 +25,8 @@ async def create_item(item: Request):
         if os.path.exists(data_directory) and os.path.isdir(data_directory):
             for item in os.listdir(data_directory):
                 shutil.rmtree(os.path.join(data_directory, item), ignore_errors=True)
-        temp_dir_name = mongo_client.read(name, configuration.get('basefolder'), 'src')
+        #todo: in the future, move the following constant parameters to the configuration file
+        temp_dir_name = mongo_client.read(name, configuration.get('basefolder'), 'src', 'dumps')
         processor = Processor(configuration, temp_dir_name)
         processor.full_process()
         pass

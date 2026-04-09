@@ -1,6 +1,6 @@
 import os
 import zipfile
-
+from pathlib import Path
 import requests
 from src.models import FileResponse
 from utils.configuration import Configuration
@@ -23,7 +23,7 @@ class MongoInterface:
             pass
         return retval
 
-    def read(self, name: str, base_folder: str, src_folder: str) -> str:
+    def read(self, name: str, base_folder: str, src_folder: str, dumps_folder: str) -> str:
         mongourl = 'http://' + self.ip + ':' + str(self.port) + '/matforpat?configuration_name=' + name
         resp = requests.get(url=mongourl)
         tmpdirname = tempfile.mkdtemp(dir=base_folder)
@@ -32,4 +32,5 @@ class MongoInterface:
             handler.write(resp.content)
         with zipfile.ZipFile(file_path, 'r') as zf:
             zf.extractall(tmpdirname + '/' + src_folder)
+        Path(tmpdirname + '/' + dumps_folder).mkdir(parents=True, exist_ok=True)
         return tmpdirname
