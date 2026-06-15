@@ -1,4 +1,6 @@
 import os
+
+from utils.utils import tif_to_png
 from src.core.core_model import State
 from src.preprocessing.alternative_ndvi import inner_outer_green
 from src.segmentation.image_fusion import Fusion
@@ -28,7 +30,10 @@ class Processor:
             # Cropping
             image_name = os.path.basename(image_filename).split('.')[0]
             if not self.images.check_pickle(image_name):
-                image = self.images.get_original(image_name) #todo: qui si genera l'errore
+                image = self.images.get_original(image_name)
+                image = tif_to_png(image)
+                #todo: occorre cambiare qua da tiff a png --> modificare image
+                #todo: dato che la funzione di utils files (in path) o cambiarla oppure lavorare con temporanei
                 try:
                     cropped_image = crop_image_with_polygon(image, self.conf)
                     self.images.add_cropped(image_name, cropped_image)

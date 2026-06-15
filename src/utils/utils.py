@@ -104,13 +104,10 @@ def normalize_band(band):
     band = np.nan_to_num(band)
     return ((band - band.min()) / (band.max() - band.min()) * 255).astype(np.uint8)
 
-def tif_to_png(tif_path, png_path):
-    with rasterio.open(tif_path) as src:
-        bands = src.read()
-    bands_norm = [normalize_band(b) for b in bands]
+def tif_to_png(tif_image):
+    bands_norm = [normalize_band(b) for b in tif_image]
     if len(bands_norm) >= 3:
         rgb = np.stack(bands_norm[:3], axis=-1)
     else:
         rgb = np.stack([bands_norm[0]] * 3, axis=-1)
-    Image.fromarray(rgb).save(png_path)
-
+    return rgb.astype(np.uint8)
